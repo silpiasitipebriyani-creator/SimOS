@@ -1,27 +1,20 @@
-# SimOS
-Aplikasi untuk simulasi penjadwalan CPU dan penanganan Deadlock lengkap dengan visualisasi langkah demi langkah serta kuis interaktif disetiap modul
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-Final Project Mata Kuliah Sistem Operasi Semester 3 2026/2027
+# Run and deploy your AI Studio app
 
-## Anggota Tim
+This contains everything you need to run your app locally.
 
-| No | Nama | NPM | Peran |
-|----|------|-----|-------|
-| 1  | Hasna Nazma Syahidah | 257006111067 |  |
-| 2  | Sahla Jahidatul Milla Al Azizah | 257006111112 |  |
-| 3  | Salsabila | 257006111113 |  |
-| 4  | Ridho Fadillah | 257006111114 |  |
-| 5  | Silpia Siti Pebriyani | 257006111116 |  |
-| 6  | Fariz Alwasi | 257006111117 |  |
+View your app in AI Studio: https://ai.studio/apps/e6e541e4-e129-442c-bd1f-576934e57422
 
-## Instalasi
+## Run Locally
 
-(akan diisi)
+**Prerequisites:**  Node.js
 
-## Cara Penggunaan
 
-(akan diisi)
-
-## Lisensi
-
-MIT License
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
