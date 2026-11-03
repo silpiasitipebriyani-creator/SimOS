@@ -5,18 +5,19 @@ export interface Process {
   name: string;
   arrivalTime: number;
   burstTime: number;
+  priority?: number;
   color: string;
 }
 
 export interface GanttSegment {
   id: string;
-  processId: string | null;
+  processId: string;
   processName: string;
   startTime: number;
   endTime: number;
   duration: number;
-  color: string;
   isIdle: boolean;
+  color: string;
 }
 
 export interface ProcessMetric {
@@ -35,12 +36,14 @@ export interface TimelineSnapshot {
   time: number;
   runningProcessId: string | null;
   runningProcessName: string | null;
-  readyQueue: { id: string; name: string }[];
+  readyQueue: { id: string; name: string; remainingTime: number }[];
   completedProcesses: string[];
   actionDescription: string;
 }
 
 export interface SchedulingResult {
+  algorithm: SchedulingAlgorithm;
+  timeQuantum: number;
   gantt: GanttSegment[];
   metrics: ProcessMetric[];
   avgWaitingTime: number;
@@ -49,17 +52,17 @@ export interface SchedulingResult {
   cpuUtilization: number;
   throughput: number;
   totalTime: number;
-  timeline: Record<number, TimelineSnapshot>;
+  timeline: TimelineSnapshot[];
 }
 
 export interface DeadlockData {
   numProcesses: number;
   numResources: number;
-  processNames: string[];
   resourceNames: string[];
+  processNames: string[];
   available: number[];
-  allocation: number[][];
   max: number[][];
+  allocation: number[][];
   need: number[][];
 }
 
@@ -71,26 +74,31 @@ export interface BankerStep {
   need: number[];
   allocation: number[];
   workAfter: number[];
+  isSatisfied: boolean;
   explanation: string;
 }
 
 export interface BankerSafetyResult {
   isSafe: boolean;
-  safeSequenceIndices: number[];
+  safeSequence: number[];
   safeSequenceNames: string[];
   steps: BankerStep[];
   message: string;
+  unfinishedProcesses: string[];
 }
 
 export interface ResourceRequestTest {
+  processIndex: number;
+  requestVector: number[];
   canBeGranted: boolean;
-  reason: string;
+  isSafeAfterGrant: boolean;
   safeSequenceAfterGrant?: string[];
+  reason: string;
 }
 
 export interface QuizQuestion {
   id: number;
-  category: string;
+  category: 'CPU Scheduling' | 'Deadlock' | 'Konsep Umum';
   question: string;
   options: string[];
   correctAnswer: number;

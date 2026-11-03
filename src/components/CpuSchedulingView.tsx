@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Play,
   Pause,
@@ -10,14 +10,16 @@ import {
   Cpu,
   Layers,
   Sparkles,
+  Info,
   Clock,
   Activity,
+  Zap,
   GraduationCap,
   ArrowLeft,
-} from "lucide-react";
-import { Process, SchedulingAlgorithm, SchedulingResult } from "../types";
-import { runCpuScheduling } from "../utils/schedulingAlgorithms";
-import { CPU_PRESETS } from "../utils/presets";
+} from 'lucide-react';
+import { Process, SchedulingAlgorithm, SchedulingResult } from '../types';
+import { runCpuScheduling } from '../utils/schedulingAlgorithms';
+import { CPU_PRESETS } from '../utils/presets';
 
 interface CpuSchedulingViewProps {
   processes: Process[];
@@ -30,14 +32,14 @@ interface CpuSchedulingViewProps {
 }
 
 const PRESET_COLORS = [
-  "#2563eb", // Blue
-  "#10b981", // Emerald
-  "#f59e0b", // Amber
-  "#8b5cf6", // Violet
-  "#ec4899", // Pink
-  "#06b6d4", // Cyan
-  "#f97316", // Orange
-  "#64748b", // Slate
+  '#2563eb', // Blue
+  '#10b981', // Emerald
+  '#f59e0b', // Amber
+  '#8b5cf6', // Violet
+  '#ec4899', // Pink
+  '#06b6d4', // Cyan
+  '#f97316', // Orange
+  '#64748b', // Slate
 ];
 
 export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
@@ -49,28 +51,29 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
   onChangeTimeQuantum,
   onOpenQuiz,
 }) => {
-  const [newName, setNewName] = useState("");
+  // New process input state
+  const [newName, setNewName] = useState('');
   const [newArrival, setNewArrival] = useState(0);
   const [newBurst, setNewBurst] = useState(4);
 
+  // Playback state
   const [currentStepTime, setCurrentStepTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1); // 1 = 1000ms per tick
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const result: SchedulingResult = runCpuScheduling(
-    processes,
-    selectedAlgorithm,
-    timeQuantum,
-  );
+  // Run calculation
+  const result: SchedulingResult = runCpuScheduling(processes, selectedAlgorithm, timeQuantum);
 
+  // Keep playback within bounds
   useEffect(() => {
     if (currentStepTime > result.totalTime) {
       setCurrentStepTime(result.totalTime);
     }
   }, [result.totalTime, currentStepTime]);
 
+  // Handle Playback Interval
   useEffect(() => {
     if (isPlaying) {
       const intervalMs = 1000 / playbackSpeed;
@@ -106,7 +109,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
     };
 
     onChangeProcesses([...processes, newProc]);
-    setNewName("");
+    setNewName('');
     setNewArrival(0);
     setNewBurst(4);
     setCurrentStepTime(0);
@@ -120,17 +123,12 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
     setIsPlaying(false);
   };
 
-  const handleUpdateProcess = (
-    id: string,
-    field: "arrivalTime" | "burstTime",
-    value: number,
-  ) => {
+  const handleUpdateProcess = (id: string, field: 'arrivalTime' | 'burstTime', value: number) => {
     const updated = processes.map((p) => {
       if (p.id === id) {
         return {
           ...p,
-          [field]:
-            field === "burstTime" ? Math.max(1, value) : Math.max(0, value),
+          [field]: field === 'burstTime' ? Math.max(1, value) : Math.max(0, value),
         };
       }
       return p;
@@ -168,13 +166,14 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
     }
   };
 
+  // Find snapshot for current playback time
   const currentSnapshot = result.timeline[currentStepTime] || {
     time: currentStepTime,
     runningProcessId: null,
     runningProcessName: null,
     readyQueue: [],
     completedProcesses: [],
-    actionDescription: "Mulai simulasi...",
+    actionDescription: 'Mulai simulasi...',
   };
 
   return (
@@ -196,31 +195,31 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {/* Algorithm Tabs */}
           <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80">
-            {(["FCFS", "SJF", "SRTF", "RR"] as SchedulingAlgorithm[]).map(
-              (algo) => {
-                const isSelected = selectedAlgorithm === algo;
-                return (
-                  <button
-                    key={algo}
-                    onClick={() => {
-                      onSelectAlgorithm(algo);
-                      setCurrentStepTime(0);
-                      setIsPlaying(false);
-                    }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                      isSelected
-                        ? "bg-blue-600 text-white shadow-xs"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                    }`}
-                  >
-                    {algo === "RR" ? "Round Robin (RR)" : algo}
-                  </button>
-                );
-              },
-            )}
+            {(['FCFS', 'SJF', 'SRTF', 'RR'] as SchedulingAlgorithm[]).map((algo) => {
+              const isSelected = selectedAlgorithm === algo;
+              return (
+                <button
+                  key={algo}
+                  onClick={() => {
+                    onSelectAlgorithm(algo);
+                    setCurrentStepTime(0);
+                    setIsPlaying(false);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  {algo === 'RR' ? 'Round Robin (RR)' : algo}
+                </button>
+              );
+            })}
           </div>
 
+          {/* Prominent Quiz Button */}
           <button
             onClick={onOpenQuiz}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-500/20 transition-all active:scale-95 shrink-0"
@@ -231,8 +230,9 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
         </div>
       </div>
 
+
       {/* Preset & Time Quantum Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800">
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 shrink-0">
             Pilihan Kasus Preset:
@@ -254,7 +254,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          {selectedAlgorithm === "RR" && (
+          {selectedAlgorithm === 'RR' && (
             <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60">
               <span className="text-xs font-bold text-blue-700 dark:text-blue-300">
                 Time Quantum (q):
@@ -264,9 +264,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                 min="1"
                 max="20"
                 value={timeQuantum}
-                onChange={(e) =>
-                  onChangeTimeQuantum(Math.max(1, Number(e.target.value) || 1))
-                }
+                onChange={(e) => onChangeTimeQuantum(Math.max(1, Number(e.target.value) || 1))}
                 className="w-14 text-center text-xs font-bold py-1 px-1.5 rounded-md bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -284,6 +282,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
 
       {/* Main Grid: Process Table & Inputs */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left 2 Cols: Table of Processes */}
         <div className="lg:col-span-2 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -291,8 +290,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               Daftar Proses Masukan ({processes.length})
             </h3>
             <span className="text-[11px] text-slate-400">
-              Klik angka untuk mengubah nilai Arrival/Burst Time secara
-              langsung.
+              Klik angka untuk mengubah nilai Arrival/Burst Time secara langsung.
             </span>
           </div>
 
@@ -308,10 +306,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
                 {processes.map((proc) => (
-                  <tr
-                    key={proc.id}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
-                  >
+                  <tr key={proc.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="py-2.5 px-3">
                       <div className="flex items-center gap-2">
                         <span
@@ -329,13 +324,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                         min="0"
                         max="100"
                         value={proc.arrivalTime}
-                        onChange={(e) =>
-                          handleUpdateProcess(
-                            proc.id,
-                            "arrivalTime",
-                            Number(e.target.value),
-                          )
-                        }
+                        onChange={(e) => handleUpdateProcess(proc.id, 'arrivalTime', Number(e.target.value))}
                         className="w-18 py-1 px-2 text-xs rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                     </td>
@@ -345,13 +334,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                         min="1"
                         max="100"
                         value={proc.burstTime}
-                        onChange={(e) =>
-                          handleUpdateProcess(
-                            proc.id,
-                            "burstTime",
-                            Number(e.target.value),
-                          )
-                        }
+                        onChange={(e) => handleUpdateProcess(proc.id, 'burstTime', Number(e.target.value))}
                         className="w-18 py-1 px-2 text-xs rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                     </td>
@@ -359,8 +342,8 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                       <button
                         onClick={() => handleRemoveProcess(proc.id)}
                         disabled={processes.length <= 1}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 disabled:opacity-30 transition-colors"
-                        title="Hapus proses"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent transition-colors"
+                        title={processes.length <= 1 ? 'Minimal harus ada 1 proses' : 'Hapus proses'}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -372,6 +355,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
           </div>
         </div>
 
+        {/* Right 1 Col: Add New Process Form */}
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow space-y-4">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <Plus className="w-4 h-4 text-emerald-600" />
@@ -403,7 +387,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                   max="100"
                   value={newArrival}
                   onChange={(e) => setNewArrival(Number(e.target.value))}
-                  className="w-full text-xs py-2 px-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs py-2 px-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                 />
               </div>
               <div>
@@ -416,7 +400,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                   max="100"
                   value={newBurst}
                   onChange={(e) => setNewBurst(Number(e.target.value))}
-                  className="w-full text-xs py-2 px-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs py-2 px-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                 />
               </div>
             </div>
@@ -429,10 +413,18 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               Tambahkan ke Daftar
             </button>
           </form>
+
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            <span className="font-bold text-slate-700 dark:text-slate-300">Tips Algoritma: </span>
+            {selectedAlgorithm === 'FCFS' && 'FCFS mengeksekusi proses berdasarkan kedatangan paling awal.'}
+            {selectedAlgorithm === 'SJF' && 'SJF Non-preemptive memilih proses dengan Burst Time terkecil di antara yang sudah tiba.'}
+            {selectedAlgorithm === 'SRTF' && 'SRTF Preemptive akan memotong eksekusi proses jika tiba proses baru dengan Remaining Time lebih kecil.'}
+            {selectedAlgorithm === 'RR' && `Round Robin membatasi durasi eksekusi maksimum tiap proses sebesar ${timeQuantum} unit waktu.`}
+          </div>
         </div>
       </div>
 
-      {/* Gantt Chart & Playback Controls */}
+      {/* Gantt Chart & Step-by-Step Playback Controls */}
       <div className="p-5 md:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -441,11 +433,11 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               Diagram Gantt Interaktif (Gantt Chart)
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Visualisasi alokasi CPU per satuan waktu dengan kontrol pemutaran
-              langkah demi langkah.
+              Visualisasi alokasi CPU per satuan waktu dengan kontrol pemutaran langkah demi langkah (Step-by-Step).
             </p>
           </div>
 
+          {/* Playback Button Group */}
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0">
             <button
               onClick={() => {
@@ -464,7 +456,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               }}
               disabled={currentStepTime <= 0}
               className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-30 transition-colors"
-              title="Langkah Sebelumnya"
+              title="Langkah Sebelumnya (t - 1)"
             >
               <SkipBack className="w-4 h-4" />
             </button>
@@ -472,23 +464,17 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               onClick={() => setIsPlaying(!isPlaying)}
               className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
             >
-              {isPlaying ? (
-                <Pause className="w-4 h-4" />
-              ) : (
-                <Play className="w-4 h-4 fill-current" />
-              )}
-              <span>{isPlaying ? "Jeda" : "Putar"}</span>
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+              <span>{isPlaying ? 'Jeda' : 'Putar'}</span>
             </button>
             <button
               onClick={() => {
                 setIsPlaying(false);
-                setCurrentStepTime((prev) =>
-                  Math.min(result.totalTime, prev + 1),
-                );
+                setCurrentStepTime((prev) => Math.min(result.totalTime, prev + 1));
               }}
               disabled={currentStepTime >= result.totalTime}
               className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-30 transition-colors"
-              title="Langkah Berikutnya"
+              title="Langkah Berikutnya (t + 1)"
             >
               <SkipForward className="w-4 h-4" />
             </button>
@@ -508,6 +494,10 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                   <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bold">
                     Sedang Eksekusi {currentSnapshot.runningProcessName}
                   </span>
+                ) : currentStepTime >= result.totalTime && result.totalTime > 0 ? (
+                  <span className="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 font-bold">
+                    Selesai Semua
+                  </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold">
                     CPU Menganggur (IDLE)
@@ -519,49 +509,98 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               </p>
             </div>
           </div>
+
+          {/* Ready Queue & Completed Badges */}
+          <div className="flex flex-wrap items-center gap-4 text-xs">
+            <div className="flex items-center gap-1.5">
+              <span className="text-slate-400 text-[11px] font-semibold">Ready Queue:</span>
+              {currentSnapshot.readyQueue.length === 0 ? (
+                <span className="text-[11px] text-slate-400 italic">Kosong</span>
+              ) : (
+                currentSnapshot.readyQueue.map((rq) => (
+                  <span
+                    key={rq.id}
+                    className="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 font-mono text-[11px] font-bold border border-amber-300/50"
+                  >
+                    {rq.name}
+                  </span>
+                ))
+              )}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-slate-400 text-[11px] font-semibold">Selesai:</span>
+              {currentSnapshot.completedProcesses.length === 0 ? (
+                <span className="text-[11px] text-slate-400 italic">Belum ada</span>
+              ) : (
+                currentSnapshot.completedProcesses.map((name) => (
+                  <span
+                    key={name}
+                    className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 font-mono text-[11px] font-bold"
+                  >
+                    {name}
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Visual Gantt Chart Bar */}
-        {result.gantt.length > 0 && (
+        {result.gantt.length > 0 ? (
           <div className="space-y-2">
             <div className="relative w-full overflow-x-auto pb-4 pt-2">
               <div className="min-w-[600px]">
-                <div className="relative flex h-14 w-full rounded-xl border border-slate-300 dark:border-slate-700 shadow-inner mt-4">
-                  {/* Catatan: 'overflow-hidden' dihapus agar elemen yang terangkat tidak terpotong */}
+                {/* Gantt Bar Segments */}
+                <div className="relative flex h-14 w-full rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 shadow-inner">
                   {result.gantt.map((seg) => {
-                    const widthPercent =
-                      (seg.duration / result.totalTime) * 100;
+                    const widthPercent = (seg.duration / result.totalTime) * 100;
                     const isPassed = seg.endTime <= currentStepTime;
                     const isCurrent =
                       currentStepTime >= seg.startTime &&
                       (currentStepTime < seg.endTime ||
-                        (currentStepTime === result.totalTime &&
-                          currentStepTime === seg.endTime));
+                        (currentStepTime === result.totalTime && currentStepTime === seg.endTime));
 
                     return (
                       <div
                         key={seg.id}
                         style={{
                           width: `${widthPercent}%`,
-                          backgroundColor: seg.isIdle ? "#94a3b8" : seg.color,
+                          backgroundColor: seg.isIdle ? '#94a3b8' : seg.color,
                         }}
-                        className={`relative h-full flex flex-col items-center justify-center text-white border-r border-white/20 transition-all duration-300 ease-in-out transform ${
-                          isCurrent
-                            ? "-translate-y-3 scale-y-110 ring-4 ring-blue-500 z-20 brightness-110 shadow-xl rounded-md" // Efek terangkat ke atas & menonjol
-                            : "translate-y-0 scale-y-100 z-0" // Posisi default di bawah
-                        } ${!isPassed && !isCurrent ? "opacity-40" : "opacity-100"}`}
+                        className={`relative h-full flex flex-col items-center justify-center text-white border-r border-white/20 transition-all duration-200 group ${
+                          isCurrent ? 'ring-4 ring-blue-500 z-10 brightness-110 shadow-lg' : ''
+                        } ${!isPassed && !isCurrent ? 'opacity-40' : 'opacity-100'}`}
                       >
-                        <span className="text-xs font-extrabold tracking-wide truncate px-1">
+                        <span className="text-xs font-extrabold tracking-wide drop-shadow-sm truncate px-1">
                           {seg.processName}
                         </span>
                         <span className="text-[10px] font-mono opacity-90">
                           {seg.duration} unit
                         </span>
+
+                        {/* Tooltip on hover */}
+                        <div className="absolute -top-10 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity bg-slate-900 text-white text-[10px] py-1 px-2 rounded-md whitespace-nowrap shadow-md z-30">
+                          {seg.processName} | Mulai: {seg.startTime} ➔ Selesai: {seg.endTime}
+                        </div>
                       </div>
                     );
                   })}
+
+                  {/* Playhead Indicator */}
+                  {result.totalTime > 0 && (
+                    <div
+                      className="absolute top-0 bottom-0 w-0.5 bg-rose-500 z-20 pointer-events-none transition-all duration-150"
+                      style={{
+                        left: `${(currentStepTime / result.totalTime) * 100}%`,
+                      }}
+                    >
+                      <div className="w-2.5 h-2.5 -ml-1 rounded-full bg-rose-500 -mt-1 shadow-sm" />
+                    </div>
+                  )}
                 </div>
 
+                {/* Gantt Time Axis Ticks */}
                 <div className="relative flex w-full text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 mt-1.5">
                   <span className="absolute left-0">0</span>
                   {result.gantt.map((seg) => {
@@ -579,6 +618,49 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Time Scrubber Slider */}
+            <div className="pt-2 flex items-center gap-3">
+              <span className="text-xs font-mono font-bold text-slate-500 shrink-0">
+                0
+              </span>
+              <input
+                type="range"
+                min="0"
+                max={result.totalTime}
+                value={currentStepTime}
+                onChange={(e) => {
+                  setIsPlaying(false);
+                  setCurrentStepTime(Number(e.target.value));
+                }}
+                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              />
+              <span className="text-xs font-mono font-bold text-slate-500 shrink-0">
+                {result.totalTime}
+              </span>
+
+              {/* Speed Controller */}
+              <div className="flex items-center gap-1 shrink-0 pl-2 border-l border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-semibold text-slate-400">Kecepatan:</span>
+                {[0.5, 1, 2].map((spd) => (
+                  <button
+                    key={spd}
+                    onClick={() => setPlaybackSpeed(spd)}
+                    className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
+                      playbackSpeed === spd
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                    }`}
+                  >
+                    {spd}x
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="py-8 text-center text-xs text-slate-400">
+            Tambahkan proses untuk melihat visualisasi Diagram Gantt.
           </div>
         )}
       </div>
@@ -595,6 +677,9 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
             </span>
             <span className="text-xs text-slate-400">unit</span>
           </div>
+          <span className="text-[10px] text-slate-400 mt-1 block">
+            Σ Waiting Time / n
+          </span>
         </div>
 
         <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow">
@@ -607,6 +692,9 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
             </span>
             <span className="text-xs text-slate-400">unit</span>
           </div>
+          <span className="text-[10px] text-slate-400 mt-1 block">
+            Σ Turnaround / n
+          </span>
         </div>
 
         <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow">
@@ -618,6 +706,9 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               {result.cpuUtilization}%
             </span>
           </div>
+          <span className="text-[10px] text-slate-400 mt-1 block">
+            (Total Burst / Total Waktu) × 100
+          </span>
         </div>
 
         <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow">
@@ -630,6 +721,92 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
             </span>
             <span className="text-xs text-slate-400">proses/unit</span>
           </div>
+          <span className="text-[10px] text-slate-400 mt-1 block">
+            n / Total Waktu Eksekusi
+          </span>
+        </div>
+      </div>
+
+      {/* Output Metrics Detailed Table */}
+      <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Clock className="w-4 h-4 text-indigo-600" />
+            Tabel Hasil Perhitungan Metrik Lengkap
+          </h3>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:flex items-center gap-3">
+            <span className="font-mono">TAT = CT - AT</span>
+            <span>•</span>
+            <span className="font-mono">WT = TAT - BT</span>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
+                <th className="py-2.5 px-3">Proses</th>
+                <th className="py-2.5 px-3">Arrival (AT)</th>
+                <th className="py-2.5 px-3">Burst (BT)</th>
+                <th className="py-2.5 px-3">Completion (CT)</th>
+                <th className="py-2.5 px-3">Turnaround (TAT)</th>
+                <th className="py-2.5 px-3">Waiting (WT)</th>
+                <th className="py-2.5 px-3">Response (RT)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+              {result.metrics.map((m) => (
+                <tr key={m.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                  <td className="py-3 px-3">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: m.color }}
+                      />
+                      <span className="font-bold text-slate-900 dark:text-white">
+                        {m.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-3 px-3 font-mono">{m.arrivalTime}</td>
+                  <td className="py-3 px-3 font-mono">{m.burstTime}</td>
+                  <td className="py-3 px-3 font-mono font-bold text-slate-900 dark:text-white">
+                    {m.completionTime}
+                  </td>
+                  <td className="py-3 px-3 font-mono text-indigo-600 dark:text-indigo-400 font-bold">
+                    {m.turnaroundTime}
+                  </td>
+                  <td className="py-3 px-3 font-mono text-blue-600 dark:text-blue-400 font-bold">
+                    {m.waitingTime}
+                  </td>
+                  <td className="py-3 px-3 font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+                    {m.responseTime}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/40 font-bold">
+                <td className="py-3 px-3 text-slate-900 dark:text-white uppercase text-[11px]">
+                  Rata-Rata (Mean)
+                </td>
+                <td className="py-3 px-3">-</td>
+                <td className="py-3 px-3">-</td>
+                <td className="py-3 px-3 font-mono text-slate-700 dark:text-slate-300">
+                  Total: {result.totalTime}
+                </td>
+                <td className="py-3 px-3 font-mono text-indigo-700 dark:text-indigo-300">
+                  {result.avgTurnaroundTime}
+                </td>
+                <td className="py-3 px-3 font-mono text-blue-700 dark:text-blue-300">
+                  {result.avgWaitingTime}
+                </td>
+                <td className="py-3 px-3 font-mono text-emerald-700 dark:text-emerald-300">
+                  {result.avgResponseTime}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
     </div>

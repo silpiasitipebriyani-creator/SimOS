@@ -26,6 +26,7 @@ const STORAGE_KEYS = {
 };
 
 export default function App() {
+  // 1. Active Module State (defaults to 'home')
   const [activeModule, setActiveModule] = useState<ActiveModule>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.ACTIVE_MODULE);
@@ -36,6 +37,7 @@ export default function App() {
     return 'home';
   });
 
+  // 2. Dark Mode State
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
     if (saved !== null) {
@@ -58,6 +60,7 @@ export default function App() {
     }
   }, [isDarkMode]);
 
+  // 3. CPU Scheduling State
   const [processes, setProcesses] = useState<Process[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.PROCESSES);
@@ -82,6 +85,7 @@ export default function App() {
     return 2;
   });
 
+  // 4. Deadlock State
   const [deadlockData, setDeadlockData] = useState<DeadlockData>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.DEADLOCK);
@@ -90,6 +94,7 @@ export default function App() {
     return DEADLOCK_PRESETS[0].data;
   });
 
+  // 5. Quiz State
   const [quizScore, setQuizScore] = useState<{ completed: boolean; score: number; total: number }>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.QUIZ);
@@ -98,6 +103,7 @@ export default function App() {
     return { completed: false, score: 0, total: 10 };
   });
 
+  // Auto-save state
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.PROCESSES, JSON.stringify(processes));
   }, [processes]);
@@ -135,8 +141,10 @@ export default function App() {
 
   return (
     <div className={`min-h-screen bg-[#f0f4f8] dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200 flex flex-col ${isDarkMode ? 'dark' : ''}`}>
+      {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-8 py-3.5 shadow-xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          {/* Left: Brand & Direct Module Links */}
           <div className="flex items-center gap-3 sm:gap-6">
             <button
               onClick={() => setActiveModule('home')}
@@ -156,6 +164,7 @@ export default function App() {
               </div>
             </button>
 
+            {/* Navigation Tabs */}
             <nav className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80">
               <button
                 onClick={() => setActiveModule('home')}
@@ -194,6 +203,7 @@ export default function App() {
             </nav>
           </div>
 
+          {/* Right Action: Dark Mode Toggle */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
@@ -216,7 +226,9 @@ export default function App() {
         </div>
       </header>
 
+      {/* Main Container */}
       <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto">
+        {/* Module 0: Home / Choice Screen */}
         {activeModule === 'home' && (
           <HomeSelector
             onSelectModule={(mod) => setActiveModule(mod)}
@@ -226,6 +238,7 @@ export default function App() {
           />
         )}
 
+        {/* Module 1: CPU Scheduling Simulator */}
         {activeModule === 'cpu' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -250,6 +263,7 @@ export default function App() {
           </div>
         )}
 
+        {/* Module 2: Deadlock Simulator */}
         {activeModule === 'deadlock' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -270,6 +284,7 @@ export default function App() {
           </div>
         )}
 
+        {/* Module 3A: CPU Quiz (10 Soal Khusus CPU Scheduling) */}
         {activeModule === 'cpu-quiz' && (
           <div className="space-y-4">
             <QuizView
@@ -282,6 +297,7 @@ export default function App() {
           </div>
         )}
 
+        {/* Module 3B: Deadlock Quiz (10 Soal Khusus Deadlock) */}
         {activeModule === 'deadlock-quiz' && (
           <div className="space-y-4">
             <QuizView
@@ -295,6 +311,7 @@ export default function App() {
         )}
       </main>
 
+      {/* Clean Footer */}
       <footer className="mt-auto border-t border-slate-200/60 dark:border-slate-800/80 py-4 px-4 text-center text-xs text-slate-400 dark:text-slate-500">
         SimOS • Simulator Penjadwalan CPU dan Deadlock Interaktif
       </footer>

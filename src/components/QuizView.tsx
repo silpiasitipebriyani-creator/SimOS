@@ -29,6 +29,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
   onBackToSimulator,
   backLabel,
 }) => {
+  // 10 questions dedicated strictly to this module
   const questions: QuizQuestion[] =
     moduleType === 'cpu' ? CPU_QUIZ_QUESTIONS : DEADLOCK_QUIZ_QUESTIONS;
 
@@ -41,12 +42,13 @@ export const QuizView: React.FC<QuizViewProps> = ({
   const isAnswered = currentQ && userAnswers[currentQ.id] !== undefined;
 
   const handleSelectOption = (questionId: number, optionIdx: number) => {
-    if (userAnswers[questionId] !== undefined) return;
+    if (userAnswers[questionId] !== undefined) return; // locked once chosen
 
     const updatedAnswers = { ...userAnswers, [questionId]: optionIdx };
     setUserAnswers(updatedAnswers);
     setShowExplanation({ ...showExplanation, [questionId]: true });
 
+    // Calculate score
     const totalQ = questions.length;
     let correctCount = 0;
     questions.forEach((q) => {
@@ -99,6 +101,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
   });
 
   const percentage = Math.round((scoreCount / (totalQuestions || 1)) * 100);
+
   const isCpu = moduleType === 'cpu';
   const defaultBackLabel = isCpu
     ? 'Kembali ke Simulator CPU'
@@ -106,6 +109,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-fadeIn">
+      {/* Top Back Action & Header */}
       <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow space-y-3">
         <button
           onClick={onBackToSimulator}
@@ -131,7 +135,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 {isCpu ? 'Kuis Penjadwalan CPU (10 Soal)' : 'Kuis Penanganan Deadlock (10 Soal)'}
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Uji pemahaman konseptual dan analitis seputar materi sistem operasi.
+                {isCpu
+                  ? 'Uji pemahaman tentang FCFS, SJF, SRTF, Round Robin, Time Quantum, dan metrik penjadwalan.'
+                  : 'Uji pemahaman tentang 4 Syarat Coffman, Banker\'s Algorithm, Safe State, dan deteksi deadlock.'}
               </p>
             </div>
           </div>
@@ -143,7 +149,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             <button
               onClick={handleResetQuiz}
               className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              title="Reset Kuis"
+              title="Reset Jawaban Kuis"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -151,11 +157,14 @@ export const QuizView: React.FC<QuizViewProps> = ({
         </div>
       </div>
 
+      {/* Progress Bar & Quick Stats */}
       <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1.5 flex-1 max-w-md">
           <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-300">
             <span>Progres: Soal {currentIndex + 1} dari {totalQuestions}</span>
-            <span>{answeredCount} / {totalQuestions} Terjawab</span>
+            <span>
+              {answeredCount} / {totalQuestions} Terjawab
+            </span>
           </div>
           <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
             <div
@@ -177,11 +186,12 @@ export const QuizView: React.FC<QuizViewProps> = ({
         </div>
       </div>
 
+      {/* Completion Banner */}
       {quizFinished && (
         <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white shadow-xl space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-white">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-white shadow-inner">
                 <Award className="w-7 h-7 text-amber-300" />
               </div>
               <div>
@@ -190,24 +200,36 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 </h3>
                 <p className="text-xs text-purple-100 mt-0.5">
                   {percentage >= 80
-                    ? 'Sangat memuaskan! Penguasaan materi Anda sangat baik.'
-                    : 'Bagus! Pelajari kembali pembahasan di bawah untuk pemahaman lebih mendalam.'}
+                    ? 'Sangat memuaskan! Anda telah menguasai materi ini dengan sangat baik.'
+                    : percentage >= 60
+                    ? 'Bagus! Anda memahami sebagian besar konsep. Periksa pembahasan di tiap soal untuk pemahaman maksimal.'
+                    : 'Terus berlatih! Pelajari kembali pembahasan di bawah dan coba lagi.'}
                 </p>
               </div>
             </div>
 
-            <button
-              onClick={handleResetQuiz}
-              className="px-4 py-2 rounded-xl bg-white text-purple-700 font-bold text-xs shadow-md hover:bg-purple-50 transition-all shrink-0 active:scale-95"
-            >
-              Ulangi Kuis
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleResetQuiz}
+                className="px-4 py-2 rounded-xl bg-white text-purple-700 font-bold text-xs shadow-md hover:bg-purple-50 transition-all shrink-0 active:scale-95"
+              >
+                Ulangi Kuis
+              </button>
+              <button
+                onClick={onBackToSimulator}
+                className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs border border-white/30 transition-all shrink-0 active:scale-95"
+              >
+                Kembali ke Simulator
+              </button>
+            </div>
           </div>
         </div>
       )}
 
+      {/* Main Question Card */}
       {currentQ && (
         <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 soft-shadow space-y-6">
+          {/* Question Header */}
           <div className="flex items-center justify-between">
             <span
               className={`text-xs font-bold px-2.5 py-1 rounded-md ${
@@ -227,6 +249,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             {currentQ.question}
           </h3>
 
+          {/* Options */}
           <div className="space-y-2.5">
             {currentQ.options.map((option, optIdx) => {
               const selectedOpt = userAnswers[currentQ.id];
@@ -235,17 +258,18 @@ export const QuizView: React.FC<QuizViewProps> = ({
               const hasAnswered = selectedOpt !== undefined;
 
               let style =
-                'bg-slate-50 dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-700/80 hover:bg-purple-50/50 text-slate-800 dark:text-slate-200';
+                'bg-slate-50 dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-700/80 hover:bg-purple-50/50 dark:hover:bg-purple-950/20 hover:border-purple-300 text-slate-800 dark:text-slate-200';
 
               if (hasAnswered) {
                 if (isCorrect) {
                   style =
-                    'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 text-emerald-900 dark:text-emerald-200 font-semibold ring-1 ring-emerald-500';
+                    'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 font-semibold ring-1 ring-emerald-500';
                 } else if (isSelected && !isCorrect) {
                   style =
-                    'bg-rose-50 dark:bg-rose-950/60 border-rose-400 text-rose-900 dark:text-rose-200 font-semibold ring-1 ring-rose-500';
+                    'bg-rose-50 dark:bg-rose-950/60 border-rose-400 dark:border-rose-700 text-rose-900 dark:text-rose-200 font-semibold ring-1 ring-rose-500';
                 } else {
-                  style = 'opacity-50 bg-slate-50 dark:bg-slate-800/40 border-slate-200 text-slate-400';
+                  style =
+                    'opacity-50 bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400';
                 }
               }
 
@@ -279,6 +303,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             })}
           </div>
 
+          {/* Explanation Box */}
           {isAnswered && (
             <div className="p-4 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900/60 space-y-2 animate-fadeIn">
               <div className="flex items-center gap-2 text-xs font-bold text-purple-900 dark:text-purple-300">
@@ -291,20 +316,47 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
           )}
 
+          {/* Navigation Controls */}
           <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
             <button
               onClick={handlePrev}
               disabled={currentIndex === 0}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Soal Sebelumnya
             </button>
 
+            {/* Question Quick Jump Badges */}
+            <div className="flex items-center gap-1">
+              {questions.map((q, idx) => {
+                const ans = userAnswers[q.id];
+                const isCur = idx === currentIndex;
+                let dotColor = 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+                if (ans !== undefined) {
+                  dotColor =
+                    ans === q.correctAnswer
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-rose-500 text-white';
+                }
+                return (
+                  <button
+                    key={q.id}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`w-6 h-6 rounded-md text-[10px] font-bold font-mono transition-all ${dotColor} ${
+                      isCur ? 'ring-2 ring-purple-600' : ''
+                    }`}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+
             <button
               onClick={handleNext}
               disabled={currentIndex === questions.length - 1}
-              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-30 transition-colors shadow-xs"
+              className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-30 disabled:hover:bg-purple-600 transition-colors shadow-xs"
             >
               Soal Berikutnya
               <ArrowRight className="w-4 h-4" />
