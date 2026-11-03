@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Play,
   Pause,
@@ -16,10 +16,10 @@ import {
   Zap,
   GraduationCap,
   ArrowLeft,
-} from 'lucide-react';
-import { Process, SchedulingAlgorithm, SchedulingResult } from '../types';
-import { runCpuScheduling } from '../utils/schedulingAlgorithms';
-import { CPU_PRESETS } from '../utils/presets';
+} from "lucide-react";
+import { Process, SchedulingAlgorithm, SchedulingResult } from "../types";
+import { runCpuScheduling } from "../utils/schedulingAlgorithms";
+import { CPU_PRESETS } from "../utils/presets";
 
 interface CpuSchedulingViewProps {
   processes: Process[];
@@ -32,14 +32,14 @@ interface CpuSchedulingViewProps {
 }
 
 const PRESET_COLORS = [
-  '#2563eb', // Blue
-  '#10b981', // Emerald
-  '#f59e0b', // Amber
-  '#8b5cf6', // Violet
-  '#ec4899', // Pink
-  '#06b6d4', // Cyan
-  '#f97316', // Orange
-  '#64748b', // Slate
+  "#2563eb", // Blue
+  "#10b981", // Emerald
+  "#f59e0b", // Amber
+  "#8b5cf6", // Violet
+  "#ec4899", // Pink
+  "#06b6d4", // Cyan
+  "#f97316", // Orange
+  "#64748b", // Slate
 ];
 
 export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
@@ -52,7 +52,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
   onOpenQuiz,
 }) => {
   // New process input state
-  const [newName, setNewName] = useState('');
+  const [newName, setNewName] = useState("");
   const [newArrival, setNewArrival] = useState(0);
   const [newBurst, setNewBurst] = useState(4);
 
@@ -64,7 +64,11 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Run calculation
-  const result: SchedulingResult = runCpuScheduling(processes, selectedAlgorithm, timeQuantum);
+  const result: SchedulingResult = runCpuScheduling(
+    processes,
+    selectedAlgorithm,
+    timeQuantum,
+  );
 
   // Keep playback within bounds
   useEffect(() => {
@@ -109,7 +113,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
     };
 
     onChangeProcesses([...processes, newProc]);
-    setNewName('');
+    setNewName("");
     setNewArrival(0);
     setNewBurst(4);
     setCurrentStepTime(0);
@@ -123,12 +127,17 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
     setIsPlaying(false);
   };
 
-  const handleUpdateProcess = (id: string, field: 'arrivalTime' | 'burstTime', value: number) => {
+  const handleUpdateProcess = (
+    id: string,
+    field: "arrivalTime" | "burstTime",
+    value: number,
+  ) => {
     const updated = processes.map((p) => {
       if (p.id === id) {
         return {
           ...p,
-          [field]: field === 'burstTime' ? Math.max(1, value) : Math.max(0, value),
+          [field]:
+            field === "burstTime" ? Math.max(1, value) : Math.max(0, value),
         };
       }
       return p;
@@ -173,7 +182,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
     runningProcessName: null,
     readyQueue: [],
     completedProcesses: [],
-    actionDescription: 'Mulai simulasi...',
+    actionDescription: "Mulai simulasi...",
   };
 
   return (
@@ -197,26 +206,28 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
         <div className="flex flex-wrap items-center gap-3">
           {/* Algorithm Tabs */}
           <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80">
-            {(['FCFS', 'SJF', 'SRTF', 'RR'] as SchedulingAlgorithm[]).map((algo) => {
-              const isSelected = selectedAlgorithm === algo;
-              return (
-                <button
-                  key={algo}
-                  onClick={() => {
-                    onSelectAlgorithm(algo);
-                    setCurrentStepTime(0);
-                    setIsPlaying(false);
-                  }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    isSelected
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {algo === 'RR' ? 'Round Robin (RR)' : algo}
-                </button>
-              );
-            })}
+            {(["FCFS", "SJF", "SRTF", "RR"] as SchedulingAlgorithm[]).map(
+              (algo) => {
+                const isSelected = selectedAlgorithm === algo;
+                return (
+                  <button
+                    key={algo}
+                    onClick={() => {
+                      onSelectAlgorithm(algo);
+                      setCurrentStepTime(0);
+                      setIsPlaying(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      isSelected
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    }`}
+                  >
+                    {algo === "RR" ? "Round Robin (RR)" : algo}
+                  </button>
+                );
+              },
+            )}
           </div>
 
           {/* Prominent Quiz Button */}
@@ -230,9 +241,8 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
         </div>
       </div>
 
-
       {/* Preset & Time Quantum Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800">
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 shrink-0">
             Pilihan Kasus Preset:
@@ -254,7 +264,7 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          {selectedAlgorithm === 'RR' && (
+          {selectedAlgorithm === "RR" && (
             <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60">
               <span className="text-xs font-bold text-blue-700 dark:text-blue-300">
                 Time Quantum (q):
@@ -264,7 +274,9 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                 min="1"
                 max="20"
                 value={timeQuantum}
-                onChange={(e) => onChangeTimeQuantum(Math.max(1, Number(e.target.value) || 1))}
+                onChange={(e) =>
+                  onChangeTimeQuantum(Math.max(1, Number(e.target.value) || 1))
+                }
                 className="w-14 text-center text-xs font-bold py-1 px-1.5 rounded-md bg-white dark:bg-slate-800 border border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -290,7 +302,8 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               Daftar Proses Masukan ({processes.length})
             </h3>
             <span className="text-[11px] text-slate-400">
-              Klik angka untuk mengubah nilai Arrival/Burst Time secara langsung.
+              Klik angka untuk mengubah nilai Arrival/Burst Time secara
+              langsung.
             </span>
           </div>
 
@@ -306,7 +319,10 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
                 {processes.map((proc) => (
-                  <tr key={proc.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                  <tr
+                    key={proc.id}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+                  >
                     <td className="py-2.5 px-3">
                       <div className="flex items-center gap-2">
                         <span
@@ -324,7 +340,13 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                         min="0"
                         max="100"
                         value={proc.arrivalTime}
-                        onChange={(e) => handleUpdateProcess(proc.id, 'arrivalTime', Number(e.target.value))}
+                        onChange={(e) =>
+                          handleUpdateProcess(
+                            proc.id,
+                            "arrivalTime",
+                            Number(e.target.value),
+                          )
+                        }
                         className="w-18 py-1 px-2 text-xs rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                     </td>
@@ -334,7 +356,13 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                         min="1"
                         max="100"
                         value={proc.burstTime}
-                        onChange={(e) => handleUpdateProcess(proc.id, 'burstTime', Number(e.target.value))}
+                        onChange={(e) =>
+                          handleUpdateProcess(
+                            proc.id,
+                            "burstTime",
+                            Number(e.target.value),
+                          )
+                        }
                         className="w-18 py-1 px-2 text-xs rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                     </td>
@@ -343,7 +371,11 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                         onClick={() => handleRemoveProcess(proc.id)}
                         disabled={processes.length <= 1}
                         className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:bg-transparent transition-colors"
-                        title={processes.length <= 1 ? 'Minimal harus ada 1 proses' : 'Hapus proses'}
+                        title={
+                          processes.length <= 1
+                            ? "Minimal harus ada 1 proses"
+                            : "Hapus proses"
+                        }
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -415,11 +447,17 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
           </form>
 
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-            <span className="font-bold text-slate-700 dark:text-slate-300">Tips Algoritma: </span>
-            {selectedAlgorithm === 'FCFS' && 'FCFS mengeksekusi proses berdasarkan kedatangan paling awal.'}
-            {selectedAlgorithm === 'SJF' && 'SJF Non-preemptive memilih proses dengan Burst Time terkecil di antara yang sudah tiba.'}
-            {selectedAlgorithm === 'SRTF' && 'SRTF Preemptive akan memotong eksekusi proses jika tiba proses baru dengan Remaining Time lebih kecil.'}
-            {selectedAlgorithm === 'RR' && `Round Robin membatasi durasi eksekusi maksimum tiap proses sebesar ${timeQuantum} unit waktu.`}
+            <span className="font-bold text-slate-700 dark:text-slate-300">
+              Tips Algoritma:{" "}
+            </span>
+            {selectedAlgorithm === "FCFS" &&
+              "FCFS mengeksekusi proses berdasarkan kedatangan paling awal."}
+            {selectedAlgorithm === "SJF" &&
+              "SJF Non-preemptive memilih proses dengan Burst Time terkecil di antara yang sudah tiba."}
+            {selectedAlgorithm === "SRTF" &&
+              "SRTF Preemptive akan memotong eksekusi proses jika tiba proses baru dengan Remaining Time lebih kecil."}
+            {selectedAlgorithm === "RR" &&
+              `Round Robin membatasi durasi eksekusi maksimum tiap proses sebesar ${timeQuantum} unit waktu.`}
           </div>
         </div>
       </div>
@@ -433,7 +471,8 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               Diagram Gantt Interaktif (Gantt Chart)
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Visualisasi alokasi CPU per satuan waktu dengan kontrol pemutaran langkah demi langkah (Step-by-Step).
+              Visualisasi alokasi CPU per satuan waktu dengan kontrol pemutaran
+              langkah demi langkah (Step-by-Step).
             </p>
           </div>
 
@@ -464,13 +503,19 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
               onClick={() => setIsPlaying(!isPlaying)}
               className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
             >
-              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-              <span>{isPlaying ? 'Jeda' : 'Putar'}</span>
+              {isPlaying ? (
+                <Pause className="w-4 h-4" />
+              ) : (
+                <Play className="w-4 h-4 fill-current" />
+              )}
+              <span>{isPlaying ? "Jeda" : "Putar"}</span>
             </button>
             <button
               onClick={() => {
                 setIsPlaying(false);
-                setCurrentStepTime((prev) => Math.min(result.totalTime, prev + 1));
+                setCurrentStepTime((prev) =>
+                  Math.min(result.totalTime, prev + 1),
+                );
               }}
               disabled={currentStepTime >= result.totalTime}
               className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-30 transition-colors"
@@ -494,7 +539,8 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                   <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bold">
                     Sedang Eksekusi {currentSnapshot.runningProcessName}
                   </span>
-                ) : currentStepTime >= result.totalTime && result.totalTime > 0 ? (
+                ) : currentStepTime >= result.totalTime &&
+                  result.totalTime > 0 ? (
                   <span className="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 font-bold">
                     Selesai Semua
                   </span>
@@ -513,9 +559,13 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
           {/* Ready Queue & Completed Badges */}
           <div className="flex flex-wrap items-center gap-4 text-xs">
             <div className="flex items-center gap-1.5">
-              <span className="text-slate-400 text-[11px] font-semibold">Ready Queue:</span>
+              <span className="text-slate-400 text-[11px] font-semibold">
+                Ready Queue:
+              </span>
               {currentSnapshot.readyQueue.length === 0 ? (
-                <span className="text-[11px] text-slate-400 italic">Kosong</span>
+                <span className="text-[11px] text-slate-400 italic">
+                  Kosong
+                </span>
               ) : (
                 currentSnapshot.readyQueue.map((rq) => (
                   <span
@@ -529,9 +579,13 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-slate-400 text-[11px] font-semibold">Selesai:</span>
+              <span className="text-slate-400 text-[11px] font-semibold">
+                Selesai:
+              </span>
               {currentSnapshot.completedProcesses.length === 0 ? (
-                <span className="text-[11px] text-slate-400 italic">Belum ada</span>
+                <span className="text-[11px] text-slate-400 italic">
+                  Belum ada
+                </span>
               ) : (
                 currentSnapshot.completedProcesses.map((name) => (
                   <span
@@ -554,23 +608,27 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
                 {/* Gantt Bar Segments */}
                 <div className="relative flex h-14 w-full rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 shadow-inner">
                   {result.gantt.map((seg) => {
-                    const widthPercent = (seg.duration / result.totalTime) * 100;
+                    const widthPercent =
+                      (seg.duration / result.totalTime) * 100;
                     const isPassed = seg.endTime <= currentStepTime;
                     const isCurrent =
                       currentStepTime >= seg.startTime &&
                       (currentStepTime < seg.endTime ||
-                        (currentStepTime === result.totalTime && currentStepTime === seg.endTime));
+                        (currentStepTime === result.totalTime &&
+                          currentStepTime === seg.endTime));
 
                     return (
                       <div
                         key={seg.id}
                         style={{
                           width: `${widthPercent}%`,
-                          backgroundColor: seg.isIdle ? '#94a3b8' : seg.color,
+                          backgroundColor: seg.isIdle ? "#94a3b8" : seg.color,
                         }}
                         className={`relative h-full flex flex-col items-center justify-center text-white border-r border-white/20 transition-all duration-200 group ${
-                          isCurrent ? 'ring-4 ring-blue-500 z-10 brightness-110 shadow-lg' : ''
-                        } ${!isPassed && !isCurrent ? 'opacity-40' : 'opacity-100'}`}
+                          isCurrent
+                            ? "ring-4 ring-blue-500 z-10 brightness-110 shadow-lg"
+                            : ""
+                        } ${!isPassed && !isCurrent ? "opacity-40" : "opacity-100"}`}
                       >
                         <span className="text-xs font-extrabold tracking-wide drop-shadow-sm truncate px-1">
                           {seg.processName}
@@ -581,7 +639,8 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
 
                         {/* Tooltip on hover */}
                         <div className="absolute -top-10 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity bg-slate-900 text-white text-[10px] py-1 px-2 rounded-md whitespace-nowrap shadow-md z-30">
-                          {seg.processName} | Mulai: {seg.startTime} ➔ Selesai: {seg.endTime}
+                          {seg.processName} | Mulai: {seg.startTime} ➔ Selesai:{" "}
+                          {seg.endTime}
                         </div>
                       </div>
                     );
@@ -641,15 +700,17 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
 
               {/* Speed Controller */}
               <div className="flex items-center gap-1 shrink-0 pl-2 border-l border-slate-200 dark:border-slate-800">
-                <span className="text-[10px] font-semibold text-slate-400">Kecepatan:</span>
+                <span className="text-[10px] font-semibold text-slate-400">
+                  Kecepatan:
+                </span>
                 {[0.5, 1, 2].map((spd) => (
                   <button
                     key={spd}
                     onClick={() => setPlaybackSpeed(spd)}
                     className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
                       playbackSpeed === spd
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
                     }`}
                   >
                     {spd}x
@@ -756,7 +817,10 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
               {result.metrics.map((m) => (
-                <tr key={m.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <tr
+                  key={m.id}
+                  className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+                >
                   <td className="py-3 px-3">
                     <div className="flex items-center gap-2">
                       <span

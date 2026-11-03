@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Cpu,
   ShieldAlert,
@@ -10,10 +10,12 @@ import {
   Moon,
   RefreshCw,
   CheckCircle2,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface HomeSelectorProps {
-  onSelectModule: (module: 'cpu' | 'deadlock' | 'cpu-quiz' | 'deadlock-quiz') => void;
+  onSelectModule: (
+    module: "cpu" | "deadlock" | "cpu-quiz" | "deadlock-quiz",
+  ) => void;
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
   onResetData: () => void;
@@ -37,7 +39,8 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
           SimOS
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
-          Pilih modul di bawah ini untuk memulai simulasi visual atau menguji pemahaman materi:
+          Pilih modul di bawah ini untuk memulai simulasi visual atau menguji
+          pemahaman materi:
         </p>
       </div>
 
@@ -60,7 +63,9 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
                 Penjadwalan CPU
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Simulasi eksekusi proses CPU menggunakan FCFS, SJF, SRTF, dan Round Robin. Dilengkapi Diagram Gantt interaktif dan kontrol playback per satuan waktu.
+                Simulasi eksekusi proses CPU menggunakan FCFS, SJF, SRTF, dan
+                Round Robin. Dilengkapi Diagram Gantt interaktif dan kontrol
+                playback per satuan waktu.
               </p>
             </div>
 
@@ -75,14 +80,14 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Dilengkapi kuis evaluasi materi 10 soal</span>
+                <span>Dilengkapi kuis evaluasi materi 20 soal</span>
               </div>
             </div>
           </div>
 
           <div className="pt-8 space-y-2.5">
             <button
-              onClick={() => onSelectModule('cpu')}
+              onClick={() => onSelectModule("cpu")}
               className="w-full py-3.5 px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition-all active:scale-98"
             >
               <Play className="w-4 h-4 fill-current" />
@@ -91,11 +96,11 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
             </button>
 
             <button
-              onClick={() => onSelectModule('cpu-quiz')}
+              onClick={() => onSelectModule("cpu-quiz")}
               className="w-full py-2.5 px-4 rounded-xl bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-98"
             >
               <GraduationCap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              Coba Kuis Penjadwalan CPU (10 Soal)
+              Coba Kuis Penjadwalan CPU (20 Soal)
             </button>
           </div>
         </div>
@@ -117,7 +122,9 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
                 Penanganan Deadlock
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Kelola matriks alokasi sumber daya (Allocation, Max, Available, Need) dan jalankan Algoritma Banker untuk mendeteksi Safe State vs Deadlock.
+                Kelola matriks alokasi sumber daya (Allocation, Max, Available,
+                Need) dan jalankan Algoritma Banker untuk mendeteksi Safe State
+                vs Deadlock.
               </p>
             </div>
 
@@ -132,14 +139,14 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Dilengkapi kuis evaluasi materi 10 soal</span>
+                <span>Dilengkapi kuis evaluasi materi 20 soal</span>
               </div>
             </div>
           </div>
 
           <div className="pt-8 space-y-2.5">
             <button
-              onClick={() => onSelectModule('deadlock')}
+              onClick={() => onSelectModule("deadlock")}
               className="w-full py-3.5 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all active:scale-98"
             >
               <Play className="w-4 h-4 fill-current" />
@@ -148,11 +155,11 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
             </button>
 
             <button
-              onClick={() => onSelectModule('deadlock-quiz')}
+              onClick={() => onSelectModule("deadlock-quiz")}
               className="w-full py-2.5 px-4 rounded-xl bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-98"
             >
               <GraduationCap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              Coba Kuis Deadlock (10 Soal)
+              Coba Kuis Deadlock (20 Soal)
             </button>
           </div>
         </div>
