@@ -1,4 +1,4 @@
-export type SchedulingAlgorithm = 'FCFS' | 'SJF' | 'SRTF' | 'RR';
+export type SchedulingAlgorithm = "FCFS" | "SJF" | "SRTF" | "RR";
 
 export interface Process {
   id: string;
@@ -18,6 +18,18 @@ export interface GanttSegment {
   duration: number;
   isIdle: boolean;
   color: string;
+}
+
+export interface QuizQuestion {
+  id: number;
+  category: string;
+  difficulty: "mudah" | "sedang" | "sulit";
+  type: "pg" | "esai";
+  question: string;
+  options?: string[];
+  correctAnswer?: number;
+  expectedKeywords?: string[];
+  explanation: string;
 }
 
 export interface ProcessMetric {
@@ -94,13 +106,4 @@ export interface ResourceRequestTest {
   isSafeAfterGrant: boolean;
   safeSequenceAfterGrant?: string[];
   reason: string;
-}
-
-export interface QuizQuestion {
-  id: number;
-  category: 'CPU Scheduling' | 'Deadlock' | 'Konsep Umum';
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
 }
