@@ -1,6 +1,0 @@
-{
-  "name": "SimOS - Simulator Penjadwalan CPU & Deadlock",
-  "description": "Simulator interaktif penjadwalan CPU (FCFS, SJF, SRTF, Round Robin) dan penanganan Deadlock (Banker's Algorithm) dengan visualisasi Gantt chart, step-by-step playback, matriks sumber daya, dan kuis evaluasi.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
