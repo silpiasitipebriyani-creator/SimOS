@@ -10,10 +10,11 @@ import { HomeSelector } from './components/HomeSelector';
 import { CpuSchedulingView } from './components/CpuSchedulingView';
 import { DeadlockView } from './components/DeadlockView';
 import { QuizView } from './components/QuizView';
+import { AboutView } from './components/AboutView';
 import { Process, SchedulingAlgorithm, DeadlockData } from './types';
 import { CPU_PRESETS, DEADLOCK_PRESETS } from './utils/presets';
 
-type ActiveModule = 'home' | 'cpu' | 'deadlock' | 'cpu-quiz' | 'deadlock-quiz';
+type ActiveModule = 'home' | 'cpu' | 'deadlock' | 'cpu-quiz' | 'deadlock-quiz' | 'about';
 
 const STORAGE_KEYS = {
   ACTIVE_MODULE: 'simos_active_module_v3',
@@ -30,7 +31,7 @@ export default function App() {
   const [activeModule, setActiveModule] = useState<ActiveModule>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.ACTIVE_MODULE);
-      if (saved && ['home', 'cpu', 'deadlock', 'cpu-quiz', 'deadlock-quiz'].includes(saved)) {
+      if (saved && ['home', 'cpu', 'deadlock', 'cpu-quiz', 'deadlock-quiz', 'about'].includes(saved)) {
         return saved as ActiveModule;
       }
     } catch {}
@@ -200,6 +201,17 @@ export default function App() {
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>Deadlock</span>
               </button>
+
+              <button
+                onClick={() => setActiveModule('about')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeModule === 'about'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                About Us
+              </button>
             </nav>
           </div>
 
@@ -309,6 +321,9 @@ export default function App() {
             />
           </div>
         )}
+
+        {/* About Us */}
+        {activeModule === 'about' && <AboutView />}
       </main>
 
       {/* Clean Footer */}
