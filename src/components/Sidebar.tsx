@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   LayoutDashboard,
   Cpu,
@@ -10,9 +10,9 @@ import {
   RefreshCw,
   X,
   Sparkles,
-} from 'lucide-react';
+} from "lucide-react";
 
-export type NavTab = 'dashboard' | 'cpu' | 'deadlock' | 'quiz';
+export type NavTab = "dashboard" | "cpu" | "deadlock" | "quiz";
 
 interface SidebarProps {
   activeTab: NavTab;
@@ -37,32 +37,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const menuItems = [
     {
-      id: 'dashboard' as NavTab,
-      label: 'Dashboard & Konsep',
-      description: 'Ringkasan & Matriks Teori',
+      id: "dashboard" as NavTab,
+      label: "Dashboard & Konsep",
+      description: "Ringkasan & Matriks Teori",
       icon: LayoutDashboard,
-      badge: 'Utama',
+      badge: "Utama",
     },
     {
-      id: 'cpu' as NavTab,
-      label: 'Penjadwalan CPU',
-      description: 'FCFS, SJF, SRTF, RR & Gantt',
+      id: "cpu" as NavTab,
+      label: "Penjadwalan CPU",
+      description: "FCFS, SJF, SRTF, RR & Gantt",
       icon: Cpu,
-      badge: '4 Algoritma',
+      badge: "4 Algoritma",
     },
     {
-      id: 'deadlock' as NavTab,
-      label: 'Penanganan Deadlock',
-      description: 'Banker\'s Algorithm & Safe State',
+      id: "deadlock" as NavTab,
+      label: "Penanganan Deadlock",
+      description: "Banker's Algorithm & Safe State",
       icon: ShieldAlert,
-      badge: 'Banker',
+      badge: "Banker",
     },
     {
-      id: 'quiz' as NavTab,
-      label: 'Kuis Interaktif',
-      description: 'Evaluasi & Auto-grading',
+      id: "quiz" as NavTab,
+      label: "Kuis Interaktif",
+      description: "Evaluasi & Auto-grading",
       icon: GraduationCap,
-      badge: '12 Soal',
+      badge: "12 Soal",
     },
   ];
 
@@ -84,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar Container */}
       <aside
         className={`fixed top-0 bottom-0 left-0 z-40 w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-r border-slate-200/80 dark:border-slate-800 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+          isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Top: Brand Header */}
@@ -134,15 +134,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => handleNavClick(item.id)}
                 className={`w-full group flex items-start gap-3 p-3 rounded-xl text-left transition-all duration-150 ${
                   isActive
-                    ? 'bg-blue-50/90 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 shadow-xs border border-blue-200/80 dark:border-blue-800/80 font-semibold'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200'
+                    ? "bg-blue-50/90 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 shadow-xs border border-blue-200/80 dark:border-blue-800/80 font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
                 <div
                   className={`mt-0.5 p-2 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-xs shadow-blue-500/30'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                      ? "bg-blue-600 text-white shadow-xs shadow-blue-500/30"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -155,8 +155,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <span
                       className={`text-[10px] px-1.5 py-0.2 rounded-md ${
                         isActive
-                          ? 'bg-blue-200/60 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                          ? "bg-blue-200/60 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                       }`}
                     >
                       {item.badge}
@@ -201,7 +201,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span>Auto-Save Aktif</span>
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-              Semua data proses dan matriks tersimpan otomatis di penyimpanan lokal (Local Storage).
+              Semua data proses dan matriks tersimpan otomatis di penyimpanan
+              lokal (Local Storage).
             </p>
           </div>
 

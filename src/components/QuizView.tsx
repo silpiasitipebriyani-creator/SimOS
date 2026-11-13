@@ -164,21 +164,18 @@ export const QuizView: React.FC<QuizViewProps> = ({
     ? "Kembali ke Simulator CPU"
     : "Kembali ke Simulator Deadlock";
 
-  // ============================================================================
-  // TAMPILAN 1: LOBBY PILIHAN PAKET SOAL
-  // ============================================================================
   if (!isStarted) {
     return (
       <div className="space-y-6 max-w-4xl mx-auto animate-fadeIn">
         <button
           onClick={onBackToSimulator}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-600 dark:text-cyan-500 hover:underline"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-100 dark:text-cyan-500 hover:underline"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{backLabel || defaultBackLabel}</span>
         </button>
 
-        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
+        <div className="p-6 rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 shadow-sm space-y-3 transition-colors">
           <div className="flex items-center gap-3">
             <div
               className={`p-3 rounded-xl text-white shadow-lg ${
@@ -206,7 +203,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Paket Mudah */}
           <div
             onClick={() => handleStartQuiz("mudah")}
             className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-500/60 cursor-pointer shadow-sm hover:shadow-md transition-all group hover:scale-[1.02] space-y-4"
@@ -231,12 +227,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>20 Soal (15 PG, 5 Isian)</span>
+              <span>6 Soal (5 PG, 1 Esai)</span>
               <ArrowRight className="w-4 h-4 text-emerald-500 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
-          {/* Paket Sedang */}
           <div
             onClick={() => handleStartQuiz("sedang")}
             className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-cyan-500/60 cursor-pointer shadow-sm hover:shadow-md transition-all group hover:scale-[1.02] space-y-4"
@@ -261,12 +256,11 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>20 Soal (15 PG, 5 Isian)</span>
+              <span>7 Soal (5 PG, 2 Esai)</span>
               <ArrowRight className="w-4 h-4 text-cyan-500 dark:text-cyan-400 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
 
-          {/* Paket Sulit */}
           <div
             onClick={() => handleStartQuiz("sulit")}
             className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-rose-400 dark:hover:border-rose-500/60 cursor-pointer shadow-sm hover:shadow-md transition-all group hover:scale-[1.02] space-y-4"
@@ -291,7 +285,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>20 Soal (15 PG, 5 Isian)</span>
+              <span>7 Soal (5 PG, 2 Esai)</span>
               <ArrowRight className="w-4 h-4 text-rose-500 dark:text-rose-400 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -300,9 +294,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
     );
   }
 
-  // ============================================================================
-  // TAMPILAN 2: HASIL AKHIR, RINGKASAN NILAI, BENAR & SALAH
-  // ============================================================================
   if (quizFinished) {
     return (
       <div className="space-y-6 max-w-4xl mx-auto animate-fadeIn">
@@ -342,7 +333,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
               </span>
             </div>
 
-            {/* Kartu Jawaban Benar */}
             <div className="p-4 rounded-xl bg-emerald-50 dark:bg-slate-950/60 border border-emerald-200 dark:border-emerald-500/30 flex flex-col items-center justify-center text-center space-y-1">
               <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mb-1">
                 <CheckCircle2 className="w-5 h-5" />
@@ -358,7 +348,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
               </span>
             </div>
 
-            {/* Kartu Jawaban Salah */}
             <div className="p-4 rounded-xl bg-rose-50 dark:bg-slate-950/60 border border-rose-200 dark:border-rose-500/30 flex flex-col items-center justify-center text-center space-y-1">
               <div className="p-2 rounded-lg bg-rose-100 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 mb-1">
                 <XCircle className="w-5 h-5" />
@@ -374,7 +363,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
               </span>
             </div>
 
-            {/* Kartu Total Soal */}
             <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-700/50 flex flex-col items-center justify-center text-center space-y-1">
               <div className="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 mb-1">
                 <HelpCircle className="w-5 h-5" />
@@ -386,13 +374,12 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 {totalQuestions}
               </span>
               <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                15 PG + 5 Isian
+                5 PG + 1 Isian
               </span>
             </div>
           </div>
         </div>
 
-        {/* Daftar Riwayat Pembahasan 20 Soal */}
         <div className="space-y-4">
           <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <BarChart2 className="w-5 h-5 text-cyan-600 dark:text-cyan-500" />{" "}
@@ -473,9 +460,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
     );
   }
 
-  // ============================================================================
-  // TAMPILAN 3: LEMBAR PENGERJAAN SOAL AKTIF
-  // ============================================================================
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-fadeIn">
       {/* Top Header Bar */}

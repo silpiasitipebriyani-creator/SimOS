@@ -32,6 +32,14 @@ export interface QuizQuestion {
   explanation: string;
 }
 
+export interface QuizAttempt {
+  id: string;
+  module: string;
+  score: number;
+  total: number;
+  date: string;
+}
+
 export interface ProcessMetric {
   id: string;
   name: string;
