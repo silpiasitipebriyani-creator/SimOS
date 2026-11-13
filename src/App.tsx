@@ -22,6 +22,7 @@ import {
 import { CPU_PRESETS, DEADLOCK_PRESETS } from "./utils/presets";
 import AuthView from "./components/AuthView";
 import { ProfileView, SimulatorAttempt } from "./components/ProfileView";
+import { AboutView } from "./components/AboutView";
 
 type ActiveModule =
   | "home"
@@ -29,7 +30,8 @@ type ActiveModule =
   | "deadlock"
   | "cpu-quiz"
   | "deadlock-quiz"
-  | "profile";
+  | "profile"
+  | "about";
 
 const STORAGE_KEYS = {
   ACTIVE_MODULE: "simos_active_module_v3",
@@ -61,6 +63,7 @@ export default function App() {
           "cpu-quiz",
           "deadlock-quiz",
           "profile",
+          "about,",
         ].includes(saved)
       ) {
         return saved as ActiveModule;
@@ -449,6 +452,17 @@ export default function App() {
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>Deadlock</span>
               </button>
+
+              <button
+                onClick={() => setActiveModule("about")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeModule === "about"
+                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                }`}
+              >
+                About Us
+              </button>
             </nav>
           </div>
 
@@ -611,6 +625,9 @@ export default function App() {
             />
           </div>
         )}
+
+        {/* About Us */}
+        {activeModule === "about" && <AboutView />}
       </main>
 
       <footer className="mt-auto border-t border-slate-200/60 dark:border-slate-800/80 py-4 px-4 text-center text-xs text-slate-400 dark:text-slate-500">
