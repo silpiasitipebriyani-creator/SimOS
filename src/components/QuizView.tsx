@@ -17,18 +17,28 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { QUIZ_QUESTIONS } from "../utils/quizData";
-import { QuizQuestion } from "../types";
+import { QuizQuestion, QuizDifficulty } from "../types";
 
 interface QuizViewProps {
   moduleType: "cpu" | "deadlock";
-  quizScore: { completed: boolean; score: number; total: number };
+  quizScore: {
+    completed: boolean;
+    score: number;
+    total: number;
+    correct?: number;
+    wrong?: number;
+    difficulty?: "mudah" | "sedang" | "sulit" | QuizDifficulty;
+  };
   onUpdateScore: (score: {
     completed: boolean;
     score: number;
     total: number;
+    correct?: number;
+    wrong?: number;
+    difficulty?: "mudah" | "sedang" | "sulit" | QuizDifficulty;
   }) => void;
   onBackToSimulator: () => void;
-  backLabel?: string;
+  backLabel: string;
 }
 
 export const QuizView: React.FC<QuizViewProps> = ({
@@ -122,10 +132,15 @@ export const QuizView: React.FC<QuizViewProps> = ({
         correctCount++;
       }
     });
+    const wrongCount = totalQuestions - correctCount;
+
     onUpdateScore({
       completed: true,
       score: correctCount,
-      total: questions.length,
+      total: totalQuestions,
+      correct: correctCount,
+      wrong: wrongCount,
+      difficulty: selectedDifficulty,
     });
   };
 

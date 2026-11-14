@@ -1,5 +1,14 @@
 export type SchedulingAlgorithm = "FCFS" | "SJF" | "SRTF" | "RR";
 
+export type ActiveModule =
+  | "home"
+  | "cpu"
+  | "deadlock"
+  | "cpu-quiz"
+  | "deadlock-quiz"
+  | "profile"
+  | "about";
+
 export interface Process {
   id: string;
   name: string;
@@ -32,11 +41,17 @@ export interface QuizQuestion {
   explanation: string;
 }
 
+export type QuizDifficulty = "Mudah" | "Sedang" | "Sulit";
+
 export interface QuizAttempt {
   id: string;
   module: string;
   score: number;
   total: number;
+  correct: number;
+  wrong: number;
+  finalScore: number;
+  difficulty: QuizDifficulty;
   date: string;
 }
 
@@ -73,6 +88,15 @@ export interface SchedulingResult {
   throughput: number;
   totalTime: number;
   timeline: TimelineSnapshot[];
+}
+
+export interface SimulatorAttempt {
+  id: string;
+  type: "CPU Scheduling" | "Deadlock";
+  algorithm: string;
+  summary: string;
+  isSafeOrOptimal: boolean;
+  date: string;
 }
 
 export interface DeadlockData {

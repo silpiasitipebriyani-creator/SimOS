@@ -46,7 +46,7 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
     <div className="flex flex-col h-full w-full bg-white dark:bg-slate-800 overflow-hidden">
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="text-black bg-slate-900 backdrop-blur-md p-8 rounded-2xl border border-slate-800 shadow-2xl w-full max-w-md">
-          <h2 className="text-3xl font-bold mb-6 text-center text-cyan-400">
+          <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
             {isLogin ? "Login SimOS" : "Daftar SimOS"}
           </h2>
 
@@ -55,7 +55,7 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
           </p>
 
           {message && (
-            <div className="mb-4 p-3 rounded bg-slate-800 border border-slate-700 text-cyan-300 text-sm text-center">
+            <div className="mb-4 p-3 rounded bg-slate-800 border border-slate-700 text-blue-400 text-sm text-center">
               {message}
             </div>
           )}
@@ -70,7 +70,7 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-white placeholder-slate-600 transition-colors"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-600 transition-colors"
                 placeholder="Masukkan username"
               />
             </div>
@@ -83,13 +83,13 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-white placeholder-slate-600 transition-colors"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white placeholder-slate-600 transition-colors"
                 placeholder="Masukkan password"
               />
             </div>
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-semibold transition-colors duration-200 shadow-lg shadow-cyan-900/20"
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-semibold transition-colors duration-200 shadow-lg shadow-cyan-900/20"
             >
               {isLogin ? "Masuk" : "Daftar"}
             </button>
@@ -103,7 +103,7 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
                 setIsLogin(!isLogin);
                 setMessage("");
               }}
-              className="text-cyan-400 hover:text-cyan-300 font-medium hover:underline focus:outline-none"
+              className="text-blue-600 hover:text-blue-500 font-medium hover:underline focus:outline-none"
             >
               {isLogin ? "Daftar sekarang" : "Login di sini"}
             </button>

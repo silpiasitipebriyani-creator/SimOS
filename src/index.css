@@ -5,11 +5,13 @@
 :root {
   --color-primary: #FFFFFF;
   --color-darkBackground: #0F172A;
+  --color-accent: #4F8EF7;
 }
 
 @theme {
   --color-Background: var(--color-primary);
   --color-darkBackground: var(--color-darkBackground);
+  --color-accent: var(--color-accent);
 }
 
 @layer base {
