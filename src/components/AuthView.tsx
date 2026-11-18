@@ -43,7 +43,7 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-white dark:bg-slate-800 overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-slate-800 overflow-hidden">
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="text-black bg-slate-900 backdrop-blur-md p-8 rounded-2xl border border-slate-800 shadow-2xl w-full max-w-md">
           <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">

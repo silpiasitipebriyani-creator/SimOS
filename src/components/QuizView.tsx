@@ -41,14 +41,33 @@ interface QuizViewProps {
   backLabel: string;
 }
 
+type PaginationItem = number | "ellipsis";
+
+function getPaginationItems(current: number, total: number): PaginationItem[] {
+  if (total <= 5) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  if (current <= 2) {
+    return [1, 2, 3, "ellipsis", total];
+  }
+  if (current === 3) {
+    return [1, 2, 3, 4, "ellipsis", total];
+  }
+  if (current >= total - 1) {
+    return [1, "ellipsis", total - 2, total - 1, total];
+  }
+  if (current === total - 2) {
+    return [1, "ellipsis", total - 3, total - 2, total - 1, total];
+  }
+  return [1, "ellipsis", current - 1, current, current + 1, "ellipsis", total];
+}
+
 export const QuizView: React.FC<QuizViewProps> = ({
   moduleType,
-  quizScore,
   onUpdateScore,
   onBackToSimulator,
   backLabel,
 }) => {
-  // State Navigasi Alur Kuis
   const [isStarted, setIsStarted] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<
     "mudah" | "sedang" | "sulit"
@@ -62,7 +81,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
 
   const categoryName = moduleType === "cpu" ? "CPU Scheduling" : "Deadlock";
 
-  // Filter 20 soal sesuai kategori dan paket kesulitan
   const questions: QuizQuestion[] = useMemo(() => {
     const filtered = QUIZ_QUESTIONS.filter(
       (q) => q.category === categoryName && q.difficulty === selectedDifficulty,
@@ -73,6 +91,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
   }, [categoryName, selectedDifficulty]);
 
   const currentQ = questions[currentIndex] || questions[0];
+  const totalQuestions = questions.length;
 
   const handleStartQuiz = (difficulty: "mudah" | "sedang" | "sulit") => {
     setSelectedDifficulty(difficulty);
@@ -96,7 +115,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
       const matchCount = keywords.filter((kw) =>
         lower.includes(kw.toLowerCase()),
       ).length;
-      return matchCount >= Math.min(1, keywords.length); // Cukup 1 kata kunci cocok untuk isian singkat
+      return matchCount >= Math.min(1, keywords.length);
     }
   };
 
@@ -164,7 +183,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
     setCurrentIndex(0);
   };
 
-  const totalQuestions = questions.length;
   let scoreCount = 0;
   questions.forEach((q) => {
     if (isQuestionCorrect(q, userAnswers[q.id])) {
@@ -179,12 +197,14 @@ export const QuizView: React.FC<QuizViewProps> = ({
     ? "Kembali ke Simulator CPU"
     : "Kembali ke Simulator Deadlock";
 
+  const paginationItems = getPaginationItems(currentIndex + 1, totalQuestions);
+
   if (!isStarted) {
     return (
       <div className="space-y-6 max-w-4xl mx-auto animate-fadeIn">
         <button
           onClick={onBackToSimulator}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-100 dark:text-cyan-500 hover:underline"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{backLabel || defaultBackLabel}</span>
@@ -242,7 +262,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>6 Soal (5 PG, 1 Esai)</span>
+              <span>20 Soal (15 PG, 5 Esai)</span>
               <ArrowRight className="w-4 h-4 text-emerald-500 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -271,7 +291,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>7 Soal (5 PG, 2 Esai)</span>
+              <span>20 Soal (15 PG, 5 Esai)</span>
               <ArrowRight className="w-4 h-4 text-cyan-500 dark:text-cyan-400 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -300,7 +320,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>7 Soal (5 PG, 2 Esai)</span>
+              <span>20 Soal (15 PG, 5 Esai)</span>
               <ArrowRight className="w-4 h-4 text-rose-500 dark:text-rose-400 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -320,7 +340,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Berikut adalah ringkasan skor dan riwayat pembahasan lengkap
-                untuk 20 butir soal.
+                untuk {totalQuestions} butir soal.
               </p>
             </div>
             <button
@@ -332,7 +352,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {/* Kartu Nilai Akhir */}
             <div className="p-4 rounded-xl bg-cyan-50 dark:bg-slate-950/60 border border-cyan-200 dark:border-cyan-500/30 flex flex-col items-center justify-center text-center space-y-1">
               <div className="p-2 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 mb-1">
                 <Award className="w-5 h-5" />
@@ -389,7 +408,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
                 {totalQuestions}
               </span>
               <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                5 PG + 1 Isian
+                15 PG + 5 Isian
               </span>
             </div>
           </div>
@@ -536,7 +555,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
             {currentQ.question}
           </h3>
 
-          {/* Input Opsi PG vs Esai (Sekarang Input Single Line) */}
+          {/* Input Opsi PG vs Esai */}
           {currentQ.type === "pg" ? (
             <div className="space-y-2.5">
               {currentQ.options?.map((option, optIdx) => {
@@ -587,7 +606,6 @@ export const QuizView: React.FC<QuizViewProps> = ({
               })}
             </div>
           ) : (
-            /* Input Esai - Sekarang Input Teks Satu Baris */
             <div className="space-y-3">
               <input
                 type="text"
@@ -637,48 +655,80 @@ export const QuizView: React.FC<QuizViewProps> = ({
             </div>
           )}
 
-          {/* Navigasi Bawah & Nomor Soal */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-5 border-t border-slate-100 dark:border-slate-800 mt-2">
-            <button
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
-              className="flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" /> Sebelumnya
-            </button>
-
-            <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-[200px] sm:max-w-none">
-              {questions.map((q, idx) => (
-                <button
-                  key={q.id}
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`w-7 h-7 rounded-md text-[11px] font-bold font-mono transition-all flex items-center justify-center ${
-                    userAnswers[q.id] !== undefined
-                      ? "bg-cyan-600 dark:bg-cyan-500 text-white dark:text-slate-950 shadow-sm"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                  } ${idx === currentIndex ? "ring-2 ring-cyan-500 ring-offset-2 dark:ring-offset-slate-900 scale-110" : ""}`}
-                >
-                  {idx + 1}
-                </button>
-              ))}
-            </div>
-
-            {currentIndex === questions.length - 1 ? (
+          <nav
+            aria-label="Navigasi nomor soal"
+            className="flex flex-wrap items-center justify-center gap-1.5 pt-5 border-t border-slate-100 dark:border-slate-800 mt-2"
+          >
+            {currentIndex > 0 && (
               <button
-                onClick={() => finishQuiz()}
-                className="flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-bold rounded-lg bg-emerald-500 text-white dark:text-slate-950 hover:bg-emerald-600 dark:hover:bg-emerald-400 shadow-md transition-all"
+                type="button"
+                onClick={handlePrev}
+                className="h-8 px-3 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               >
-                Selesai Kuis
+                « Sebelumnya
+              </button>
+            )}
+
+            {paginationItems.map((item, idx) => {
+              if (item === "ellipsis") {
+                return (
+                  <span
+                    key={`ellipsis-${idx}`}
+                    className="h-8 px-2.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center justify-center select-none"
+                  >
+                    ...
+                  </span>
+                );
+              }
+
+              const targetIndex = item - 1;
+              const targetQuestion = questions[targetIndex];
+              const isCurrent = targetIndex === currentIndex;
+              const isAnswered =
+                targetQuestion && userAnswers[targetQuestion.id] !== undefined;
+
+              let itemClass =
+                "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
+
+              if (isCurrent) {
+                itemClass =
+                  "bg-cyan-600 dark:bg-cyan-500 border-cyan-600 dark:border-cyan-500 text-white dark:text-slate-950 font-extrabold shadow-xs";
+              } else if (isAnswered) {
+                itemClass =
+                  "bg-cyan-50 dark:bg-cyan-950/60 border-cyan-300 dark:border-cyan-700 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/60";
+              }
+
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setCurrentIndex(targetIndex)}
+                  aria-current={isCurrent ? "page" : undefined}
+                  className={`h-8 min-w-[32px] px-2.5 rounded-md border text-xs font-bold font-mono transition-colors ${itemClass}`}
+                >
+                  {item}
+                </button>
+              );
+            })}
+
+            {currentIndex < totalQuestions - 1 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="h-8 px-3 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-cyan-600 hover:text-white hover:border-cyan-600 dark:hover:bg-cyan-500 dark:hover:text-slate-950 dark:hover:border-cyan-500 transition-colors"
+              >
+                Berikutnya »
               </button>
             ) : (
               <button
-                onClick={handleNext}
-                className="flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold rounded-lg bg-cyan-600 dark:bg-cyan-500 text-white dark:text-slate-950 hover:bg-cyan-700 dark:hover:bg-cyan-400 shadow-md transition-all"
+                type="button"
+                onClick={() => finishQuiz()}
+                className="h-8 px-3.5 rounded-md bg-emerald-600 dark:bg-emerald-500 border border-emerald-600 dark:border-emerald-500 text-xs font-bold text-white dark:text-slate-950 hover:bg-emerald-700 dark:hover:bg-emerald-400 transition-colors shadow-xs"
               >
-                Berikutnya <ArrowRight className="w-4 h-4" />
+                Selesai Kuis
               </button>
             )}
-          </div>
+          </nav>
         </div>
       )}
     </div>
