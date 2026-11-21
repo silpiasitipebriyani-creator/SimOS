@@ -1,58 +1,107 @@
-import React from "react";
-import { ArrowLeft, BookmarkCheck } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { ArrowLeft, BookmarkCheck, Clock, Loader2 } from "lucide-react";
 
 interface SimulatorTopBarProps {
-  accentColor: "blue" | "emerald";
+  currentUser?: string | null;
   savedNotice: string | null;
   onBack: () => void;
-  onSave: () => void;
+  onSave: () => void | Promise<void>;
+  cooldownSeconds?: number;
 }
 
-const ACCENT_STYLES = {
-  blue: {
-    backHover: "hover:text-blue-600 dark:hover:text-blue-400",
-    saveButton:
-      "bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/60",
-  },
-  emerald: {
-    backHover: "hover:text-emerald-600 dark:hover:text-emerald-400",
-    saveButton:
-      "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60",
-  },
-} as const;
-
 export function SimulatorTopBar({
-  accentColor,
+  currentUser,
   savedNotice,
   onBack,
   onSave,
+  cooldownSeconds = 5,
 }: SimulatorTopBarProps) {
-  const styles = ACCENT_STYLES[accentColor];
+  const [isSaving, setIsSaving] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  const isLoggedIn = Boolean(currentUser);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setCooldown(0);
+      setIsSaving(false);
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setCooldown((prev) => (prev > 1 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [cooldown]);
+
+  const isDisabled = isSaving || cooldown > 0;
+
+  const handleSave = async () => {
+    if (!isLoggedIn || isDisabled) return;
+
+    setIsSaving(true);
+    try {
+      await onSave();
+    } finally {
+      setIsSaving(false);
+      setCooldown(cooldownSeconds);
+    }
+  };
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <button
+        type="button"
         onClick={onBack}
-        className={`inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 transition-colors ${styles.backHover}`}
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Kembali ke Pilihan Modul</span>
       </button>
 
-      <div className="flex items-center gap-2">
-        {savedNotice && (
-          <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            {savedNotice}
-          </span>
-        )}
-        <button
-          onClick={onSave}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${styles.saveButton}`}
-        >
-          <BookmarkCheck className="w-3.5 h-3.5" />
-          <span>Simpan ke Riwayat Profil</span>
-        </button>
-      </div>
+      {isLoggedIn && (
+        <div className="flex items-center gap-2">
+          {savedNotice && (
+            <span
+              className={`text-xs font-semibold ${
+                savedNotice.toLowerCase().startsWith("gagal")
+                  ? "text-rose-500"
+                  : "text-accent"
+              }`}
+            >
+              {savedNotice}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isDisabled}
+            aria-busy={isSaving}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-accent-soft text-accent border border-accent-border hover:bg-accent hover:text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-accent-soft disabled:hover:text-accent"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Menyimpan...</span>
+              </>
+            ) : cooldown > 0 ? (
+              <>
+                <Clock className="w-3.5 h-3.5" />
+                <span>Tunggu {cooldown}d...</span>
+              </>
+            ) : (
+              <>
+                <BookmarkCheck className="w-3.5 h-3.5" />
+                <span>Simpan ke Riwayat Profil</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

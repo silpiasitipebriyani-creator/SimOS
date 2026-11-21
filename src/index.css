@@ -3,69 +3,106 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --color-primary: #FFFFFF;
-  --color-darkBackground: #0F172A;
-  --color-accent: #4F8EF7;
+  --bg-base: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f8fafc;
+  --bg-from-cpu: #2563eb;
+  --bg-to-cpu: #4f46e5;
+  --border-subtle: #e2e8f0;
+
+  --color-secondary: #2563eb;
+  --color-secondary-hover: #1d4ed8;
+  --color-secondary-soft: rgba(37, 99, 235, 0.1);
+  --color-secondary-border: #e2e8f0;
+  --bg-tertiary: #2563EB;
+
+  --text-on-secondary: #ffffff;
+  --text-secondary-accent: #2563eb;
+
+  --color-accent: #10b981;
+  --color-accent-hover: #059669;
+  --color-accent-soft: rgba(16, 185, 129, 0.12);
+  --color-accent-border: rgba(16, 185, 129, 0.3);
+  --color-medium: #F68620;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #f8fafc;
 }
 
-@theme {
-  --color-Background: var(--color-primary);
-  --color-darkBackground: var(--color-darkBackground);
+.dark {
+  --bg-base: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-elevated: #273549;
+
+  --border-subtle: #334155;
+
+  --color-secondary: #1e293b;
+  --color-secondary-hover: #334155;
+  --color-secondary-soft: rgba(30, 41, 59, 0.85);
+  --color-secondary-border: #334155;
+  --bg-tertiary: #f8fafc;
+
+  --text-on-secondary: #f8fafc;
+  --text-secondary-accent: #60a5fa;
+
+  --color-accent: #3b82f6;
+  --color-accent-hover: #60a5fa;
+  --color-accent-soft: rgba(59, 130, 246, 0.16);
+  --color-accent-border: rgba(59, 130, 246, 0.35);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #0f172a;
+}
+
+@theme inline {
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-line: var(--border-subtle);
+
+  --color-secondary: var(--color-secondary);
+  --color-secondary-hover: var(--color-secondary-hover);
+  --color-secondary-soft: var(--color-secondary-soft);
+  --color-secondary-border: var(--color-secondary-border);
+  --color-on-secondary: var(--text-on-secondary);
+  --color-secondary-ink: var(--text-secondary-accent);
+  --color-tertiary: var(--bg-tertiary);
+
   --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-accent-border: var(--color-accent-border);
+
+  --color-ink: var(--text-primary);
+  --color-ink-reverse: var(--text-tertiary);
+  --color-muted: var(--text-secondary);
+
+  --color-from: var(--bg-from-cpu);
+  --color-to: var(--bg-to-cpu);
+  --color-medium: var(--color-medium);
 }
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-
-  code, pre, .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
   }
 }
 
-.soft-shadow {
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.soft-shadow-hover:hover {
-  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.07), 0 6px 14px -2px rgba(0, 0, 0, 0.04);
-}
-
-.dark .soft-shadow {
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35), 0 4px 12px -2px rgba(0, 0, 0, 0.2);
-}
-
-.soft-inset {
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-}
-
-.dark .soft-inset {
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
 }

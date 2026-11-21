@@ -7,10 +7,8 @@ export const STORAGE_KEYS = {
   QUANTUM: "simos_quantum_v3",
   DEADLOCK: "simos_deadlock_v3",
   QUIZ: "simos_quiz_v3",
-  QUIZ_HISTORY: "simos_quiz_history_v3",
   DARK_MODE: "simos_dark_mode_v3",
   USER: "simos_user_v3",
-  SIMULATOR_HISTORY: "simos_simulator_history_v3",
 } as const;
 
 export const VALID_MODULES: readonly ActiveModule[] = [

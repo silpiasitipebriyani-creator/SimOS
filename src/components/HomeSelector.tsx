@@ -30,41 +30,30 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
   return (
     <div className="max-w-4xl mx-auto py-6 sm:py-8 space-y-8 animate-fadeIn">
       <div className="text-center space-y-3">
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-ink tracking-tight">
           SimOS
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
+        <p className="text-sm text-muted max-w-xl mx-auto leading-relaxed">
           Pilih modul di bawah ini untuk memulai simulasi visual atau menguji
           pemahaman materi:
         </p>
       </div>
 
-      {/* 2 Main Choice Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-        {/* Card 1: Penjadwalan CPU */}
         <div className="relative group bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border-2 border-slate-200/80 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 shadow-xl transition-all duration-200 flex flex-col justify-between">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
-                <Cpu className="w-8 h-8" />
-              </div>
-              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300">
-                4 Algoritma
-              </span>
-            </div>
-
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <h2 className="text-xl sm:text-2xl font-bold text-ink group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 Penjadwalan CPU
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted mt-2 leading-relaxed">
                 Simulasi eksekusi proses CPU menggunakan FCFS, SJF, SRTF, dan
                 Round Robin. Dilengkapi Diagram Gantt interaktif dan kontrol
                 playback per satuan waktu.
               </p>
             </div>
 
-            <div className="space-y-1.5 pt-2 text-xs text-slate-600 dark:text-slate-300">
+            <div className="space-y-1.5 pt-2 text-xs text-muted">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>Visualisasi Diagram Gantt & Playback real-time</span>
@@ -95,35 +84,25 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
               className="w-full py-2.5 px-4 rounded-xl bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-98"
             >
               <GraduationCap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              Coba Kuis Penjadwalan CPU (20 Soal)
+              Coba Kuis Penjadwalan CPU
             </button>
           </div>
         </div>
 
-        {/* Card 2: Penanganan Deadlock */}
         <div className="relative group bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border-2 border-slate-200/80 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 shadow-xl transition-all duration-200 flex flex-col justify-between">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                <ShieldAlert className="w-8 h-8" />
-              </div>
-              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
-                Banker's Algorithm
-              </span>
-            </div>
-
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              <h2 className="text-xl sm:text-2xl font-bold text-ink group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                 Penanganan Deadlock
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted mt-2 leading-relaxed">
                 Kelola matriks alokasi sumber daya (Allocation, Max, Available,
                 Need) dan jalankan Algoritma Banker untuk mendeteksi Safe State
                 vs Deadlock.
               </p>
             </div>
 
-            <div className="space-y-1.5 pt-2 text-xs text-slate-600 dark:text-slate-300">
+            <div className="space-y-1.5 pt-2 text-xs text-muted">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>Pemeriksaan Keadaan Aman (Safe State) instan</span>
@@ -154,7 +133,7 @@ export const HomeSelector: React.FC<HomeSelectorProps> = ({
               className="w-full py-2.5 px-4 rounded-xl bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-98"
             >
               <GraduationCap className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              Coba Kuis Deadlock (20 Soal)
+              Coba Kuis Deadlock
             </button>
           </div>
         </div>

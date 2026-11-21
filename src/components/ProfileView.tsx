@@ -7,10 +7,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Trash2,
-  ClipboardCheck,
-  TrendingUp,
-  Trophy,
-  Activity,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
@@ -33,13 +29,11 @@ const PAGE_SIZE = 2;
 const PASS_SCORE = 70;
 
 const focusRing =
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500";
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
-const cardClass =
-  "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm";
+const cardClass = "bg-surface border border-line rounded-2xl p-6 shadow-sm";
 
-const rowClass =
-  "bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl";
+const rowClass = "bg-elevated border border-line rounded-xl";
 
 const isDeadlockModule = (moduleName: string) =>
   moduleName.toLowerCase().includes("deadlock");
@@ -59,7 +53,7 @@ function ClearAllButton({ onConfirm }: { onConfirm: () => void }) {
     return (
       <button
         onClick={() => setArmed(true)}
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ${focusRing}`}
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-muted hover:text-rose-500 hover:bg-rose-500/10 transition-colors ${focusRing}`}
       >
         <Trash2 className="w-3.5 h-3.5" />
         <span>Hapus semua</span>
@@ -69,19 +63,19 @@ function ClearAllButton({ onConfirm }: { onConfirm: () => void }) {
 
   return (
     <div className="inline-flex items-center gap-1.5">
-      <span className="text-xs text-slate-500 dark:text-slate-400">Yakin?</span>
+      <span className="text-xs text-muted">Yakin?</span>
       <button
         onClick={() => {
           onConfirm();
           setArmed(false);
         }}
-        className={`px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors ${focusRing}`}
+        className={`px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-colors ${focusRing}`}
       >
         Ya, hapus
       </button>
       <button
         onClick={() => setArmed(false)}
-        className={`px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${focusRing}`}
+        className={`px-3 py-1.5 rounded-lg text-xs font-semibold text-muted hover:bg-elevated transition-colors ${focusRing}`}
       >
         Batal
       </button>
@@ -104,7 +98,7 @@ function ListToggle({
     <button
       onClick={onToggle}
       aria-expanded={expanded}
-      className={`w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors ${focusRing}`}
+      className={`w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold text-secondary-ink hover:bg-secondary-soft transition-colors ${focusRing}`}
     >
       {expanded ? (
         <ChevronUp className="w-4 h-4" />
@@ -117,33 +111,28 @@ function ListToggle({
 }
 
 function StatCard({
-  icon,
   label,
   value,
-  hint,
+  suffix,
 }: {
-  icon: React.ReactNode;
   label: string;
   value: string | number;
-  hint?: string;
+  suffix?: string;
 }) {
   return (
-    <div className={`${cardClass} !p-4 sm:!p-5 flex items-center gap-4`}>
-      <div className="w-11 h-11 shrink-0 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-        {icon}
-      </div>
-      <div className="min-w-0">
-        <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-          {label}
+    <div
+      className={`${cardClass} !p-4 sm:!p-5 flex flex-col items-center justify-center text-center`}
+    >
+      <div className="min-w-0 w-full space-y-1">
+        <div className="text-xs font-medium text-muted">{label}</div>
+        <div className="flex items-baseline justify-center gap-1">
+          <span className="text-2xl font-bold text-ink leading-tight">
+            {value}
+          </span>
+          {suffix && (
+            <span className="text-xs font-medium text-muted">{suffix}</span>
+          )}
         </div>
-        <div className="text-2xl font-bold text-slate-900 dark:text-white leading-tight">
-          {value}
-        </div>
-        {hint && (
-          <div className="text-xs text-slate-500 dark:text-slate-400 truncate">
-            {hint}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -159,16 +148,14 @@ function ModuleBar({
   return (
     <div>
       <div className="flex items-baseline justify-between mb-1.5">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-          {label}
-        </span>
-        <span className="text-xs text-slate-500 dark:text-slate-400">
+        <span className="text-sm font-medium text-ink">{label}</span>
+        <span className="text-xs text-muted">
           {data ? `${data.avg} · ${data.count} kuis` : "Belum ada data"}
         </span>
       </div>
-      <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+      <div className="h-2 rounded-full bg-elevated overflow-hidden border border-line">
         <div
-          className="h-full rounded-full bg-blue-600 dark:bg-blue-500 transition-all"
+          className="h-full rounded-full bg-accent transition-all"
           style={{ width: `${data?.avg ?? 0}%` }}
         />
       </div>
@@ -191,7 +178,7 @@ export function ProfileView({
   const [simExpanded, setSimExpanded] = useState(false);
 
   const difficultyStyle =
-    "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+    "bg-secondary-soft text-secondary-ink border-secondary-border";
 
   const stats = useMemo(() => {
     const scores = quizHistory.map(getFinalScore);
@@ -213,7 +200,6 @@ export function ProfileView({
       best: scores.length ? Math.max(...scores) : null,
       cpu: byModule(false),
       deadlock: byModule(true),
-      trend: [...quizHistory].reverse().slice(-10).map(getFinalScore),
     };
   }, [quizHistory]);
 
@@ -256,11 +242,11 @@ export function ProfileView({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 animate-fadeIn">
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className={`inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded ${focusRing}`}
+          className={`inline-flex items-center gap-1.5 text-sm font-semibold text-secondary-ink hover:text-accent transition-colors rounded ${focusRing}`}
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke beranda</span>
@@ -268,65 +254,49 @@ export function ProfileView({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Kuis selesai" value={quizHistory.length} />
         <StatCard
-          icon={<ClipboardCheck className="w-5 h-5" />}
-          label="Kuis selesai"
-          value={quizHistory.length}
-        />
-        <StatCard
-          icon={<TrendingUp className="w-5 h-5" />}
           label="Rata-rata nilai"
           value={stats.average ?? "–"}
-          hint={stats.average === null ? undefined : "dari 100"}
+          suffix={stats.average === null ? undefined : "/ 100"}
         />
         <StatCard
-          icon={<Trophy className="w-5 h-5" />}
           label="Nilai tertinggi"
           value={stats.best ?? "–"}
-          hint={stats.best === null ? undefined : "dari 100"}
+          suffix={stats.best === null ? undefined : "/ 100"}
         />
-        <StatCard
-          icon={<Activity className="w-5 h-5" />}
-          label="Simulasi dijalankan"
-          value={simulatorHistory.length}
-        />
+        <StatCard label="Simulasi dijalankan" value={simulatorHistory.length} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <aside className="space-y-6 lg:col-start-3 lg:row-start-1">
           <div className={cardClass}>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 shrink-0 bg-blue-600 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-800 shadow-md">
-                <User className="w-7 h-7 text-white" />
+              <div className="w-16 h-16 shrink-0 bg-secondary rounded-full flex items-center justify-center border-4 border-secondary-soft shadow-md">
+                <User className="w-7 h-7 text-on-secondary" />
               </div>
               <div className="min-w-0">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white truncate">
+                <h2 className="text-xl font-bold text-ink truncate">
                   {username}
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Pengguna SimOS
-                </p>
+                <p className="text-sm text-muted">Pengguna SimOS</p>
               </div>
             </div>
           </div>
 
           <div className={cardClass}>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">
-              Performa kuis
-            </h3>
+            <h3 className="text-base font-bold text-ink mb-4">Performa kuis</h3>
             <div className="space-y-4">
               <ModuleBar label="Penjadwalan CPU" data={stats.cpu} />
               <ModuleBar label="Deadlock" data={stats.deadlock} />
-            </div>{" "}
+            </div>
           </div>
         </aside>
 
         <section className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
           <div className={cardClass}>
             <div className="flex flex-wrap items-center justify-between mb-2">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                Riwayat kuis
-              </h3>
+              <h3 className="text-xl font-bold text-ink">Riwayat kuis</h3>
               {quizHistory.length > 0 && (
                 <ClearAllButton onConfirm={onClearQuizHistory} />
               )}
@@ -345,16 +315,16 @@ export function ProfileView({
                     role="tab"
                     aria-selected={active}
                     onClick={() => changeFilter(tab.id)}
-                    className={`px-2 py-1 rounded-lg text-xs font-semibold transition-colors ${focusRing} ${
+                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${focusRing} ${
                       active
-                        ? "bg-blue-600 text-white"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                        ? "bg-accent text-white"
+                        : "bg-elevated text-muted hover:text-ink"
                     }`}
                   >
                     {tab.label}
                     <span
                       className={`ml-1.5 ${
-                        active ? "text-blue-100" : "text-slate-400"
+                        active ? "text-white/80" : "text-muted"
                       }`}
                     >
                       {counts[tab.id]}
@@ -366,7 +336,7 @@ export function ProfileView({
 
             <div className="space-y-3">
               {filteredQuiz.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 dark:text-slate-400 text-sm">
+                <div className="text-center py-8 text-muted text-sm">
                   {quizHistory.length === 0
                     ? "Belum ada kuis yang diselesaikan. Mulai dari halaman modul."
                     : "Belum ada kuis untuk modul ini."}
@@ -388,34 +358,30 @@ export function ProfileView({
                     >
                       <div className="min-w-0 space-y-1.5">
                         <div className="flex items-center gap-2 flex-wrap mb-2">
-                          <h4 className="font-bold text-slate-800 dark:text-slate-200 text-[16px]">
+                          <h4 className="font-bold text-ink text-[16px]">
                             {quiz.module}
                           </h4>
                           <span
-                            className={`text-xs px-1 rounded-md font-medium border ${difficultyStyle}`}
+                            className={`text-xs px-1.5 py-0.5 rounded-md font-medium border ${difficultyStyle}`}
                           >
                             {difficultyLabel}
                           </span>
                         </div>
 
                         <div className="flex items-center gap-4 flex-wrap text-xs">
-                          <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                          <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                             Betul: {correctCount}
                           </span>
-                          <span className="px-2 py-1 rounded bg-rose-500/10 text-rose-700 dark:text-rose-400">
+                          <span className="px-2 py-1 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400">
                             Salah: {wrongCount}
                           </span>
-                          <span className="text-slate-500 dark:text-slate-400">
-                            {quiz.date}
-                          </span>
+                          <span className="text-muted">{quiz.date}</span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-3 shrink-0">
                         <div className="text-right">
-                          <div className="text-xs text-slate-500 dark:text-slate-400">
-                            Nilai total
-                          </div>
+                          <div className="text-xs text-muted">Nilai total</div>
                           <div className="flex items-baseline justify-end gap-1">
                             <span
                               className={`text-3xl font-black leading-none ${
@@ -426,15 +392,13 @@ export function ProfileView({
                             >
                               {finalResult}
                             </span>
-                            <span className="text-xs text-slate-500 dark:text-slate-400">
-                              / 100
-                            </span>
+                            <span className="text-xs text-muted">/ 100</span>
                           </div>
                         </div>
 
                         <button
                           onClick={() => onDeleteQuizHistory(quiz.id)}
-                          className={`p-2 rounded-lg text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ${focusRing}`}
+                          className={`p-2 rounded-lg text-muted hover:text-rose-500 hover:bg-rose-500/10 transition-colors ${focusRing}`}
                           title="Hapus riwayat kuis ini"
                           aria-label="Hapus riwayat kuis ini"
                         >
@@ -458,7 +422,7 @@ export function ProfileView({
 
       <section className={cardClass}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+          <h3 className="text-lg font-bold text-ink">
             Riwayat simulasi grafis & kalkulasi
           </h3>
           {simulatorHistory.length > 0 && (
@@ -468,7 +432,7 @@ export function ProfileView({
 
         <div className="space-y-3">
           {simulatorHistory.length === 0 ? (
-            <div className="text-center py-8 text-slate-500 dark:text-slate-400 text-sm">
+            <div className="text-center py-8 text-muted text-sm">
               Belum ada simulasi yang dicatat. Jalankan simulasi CPU atau
               Deadlock untuk mulai.
             </div>
@@ -479,23 +443,14 @@ export function ProfileView({
                 className={`flex items-center justify-between gap-3 p-4 ${rowClass}`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="p-2 rounded-lg shrink-0 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                    {sim.type === "Deadlock" ? (
-                      <ShieldAlert className="w-5 h-5" />
-                    ) : (
-                      <Cpu className="w-5 h-5" />
-                    )}
-                  </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">
-                        {sim.type}
-                      </h4>
-                      <span className="text-xs px-2 py-0.5 bg-slate-200 dark:bg-slate-800 rounded font-medium text-slate-600 dark:text-slate-300">
+                      <h4 className="font-bold text-ink text-sm">{sim.type}</h4>
+                      <span className="text-xs px-2 py-0.5 bg-surface border border-line rounded font-medium text-muted">
                         {sim.algorithm}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono truncate">
+                    <p className="text-xs text-muted mt-1 font-mono truncate">
                       {sim.summary}
                     </p>
                   </div>
@@ -506,8 +461,8 @@ export function ProfileView({
                     <span
                       className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md ${
                         sim.isSafeOrOptimal
-                          ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400"
-                          : "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400"
+                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                          : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
                       }`}
                     >
                       {sim.isSafeOrOptimal ? (
@@ -521,14 +476,12 @@ export function ProfileView({
                           : "Unsafe"
                         : "Optimal"}
                     </span>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {sim.date}
-                    </p>
+                    <p className="text-xs text-muted">{sim.date}</p>
                   </div>
 
                   <button
                     onClick={() => onDeleteSimulatorHistory(sim.id)}
-                    className={`p-2 rounded-lg text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ${focusRing}`}
+                    className={`p-2 rounded-lg text-muted hover:text-rose-500 hover:bg-rose-500/10 transition-colors ${focusRing}`}
                     title="Hapus riwayat simulasi ini"
                     aria-label="Hapus riwayat simulasi ini"
                   >
@@ -540,7 +493,7 @@ export function ProfileView({
           )}
           <ListToggle
             total={simulatorHistory.length}
-            expanded={quizExpanded}
+            expanded={simExpanded}
             onToggle={() => setSimExpanded((v) => !v)}
           />
         </div>

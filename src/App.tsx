@@ -66,7 +66,7 @@ export default function App() {
     handleClearSimulatorHistory,
     resetQuizScore,
   } = useSimosHistory({
-    activeModule,
+    currentUser,
     processes,
     selectedAlgorithm,
     timeQuantum,
@@ -107,7 +107,7 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen relative bg-[#f0f4f8] dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200 flex flex-col ${
+      className={`min-h-screen relative bg-base text-ink transition-colors duration-200 flex flex-col ${
         isDarkMode ? "dark" : ""
       }`}
     >
@@ -147,7 +147,7 @@ export default function App() {
         {activeModule === "cpu" && (
           <div className="space-y-4">
             <SimulatorTopBar
-              accentColor="blue"
+              currentUser={currentUser}
               savedNotice={savedNotice}
               onBack={() => setActiveModule("home")}
               onSave={() => handleManualSaveSimulation("cpu")}
@@ -167,7 +167,7 @@ export default function App() {
         {activeModule === "deadlock" && (
           <div className="space-y-4">
             <SimulatorTopBar
-              accentColor="emerald"
+              currentUser={currentUser}
               savedNotice={savedNotice}
               onBack={() => setActiveModule("home")}
               onSave={() => handleManualSaveSimulation("deadlock")}
@@ -204,10 +204,12 @@ export default function App() {
           </div>
         )}
 
-        {activeModule === "about" && <AboutView />}
+        {activeModule === "about" && (
+          <AboutView onBack={() => setActiveModule("home")} />
+        )}
       </main>
 
-      <footer className="mt-auto border-t border-slate-200/60 dark:border-slate-800/80 py-4 px-4 text-center text-xs text-slate-400 dark:text-slate-500">
+      <footer className="mt-auto border-t border-line bg-surface py-4 px-4 text-center text-xs text-muted">
         SimOS • Simulator Penjadwalan CPU dan Deadlock Interaktif
       </footer>
 

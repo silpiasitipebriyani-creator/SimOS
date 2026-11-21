@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 import { STORAGE_KEYS } from "../constants/storage";
 import {
-  ActiveModule,
   DeadlockData,
   Process,
   QuizAttempt,
@@ -16,6 +15,14 @@ import {
   summarizeCpuSimulation,
 } from "../utils/simulationHelpers";
 
+const RAW_API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:3001"
+).replace(/\/+$/, "");
+
+const API_BASE_URL = RAW_API_URL.endsWith("/api")
+  ? RAW_API_URL
+  : `${RAW_API_URL}/api`;
+
 export interface QuizScoreState {
   completed: boolean;
   score: number;
@@ -26,7 +33,7 @@ export interface QuizScoreState {
 }
 
 interface UseSimosHistoryParams {
-  activeModule: ActiveModule;
+  currentUser: string | null;
   processes: Process[];
   selectedAlgorithm: SchedulingAlgorithm;
   timeQuantum: number;
@@ -39,6 +46,13 @@ const DEFAULT_QUIZ_SCORE: QuizScoreState = {
   total: 10,
 };
 
+function generateId() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
 function formatIndonesianDate() {
   return new Date().toLocaleString("id-ID", {
     day: "numeric",
@@ -49,8 +63,23 @@ function formatIndonesianDate() {
   });
 }
 
+async function extractErrorMessage(
+  response: Response,
+  fallback: string,
+): Promise<string> {
+  try {
+    const data = await response.json();
+    if (data && typeof data.error === "string") {
+      return data.error;
+    }
+  } catch {
+    // Abaikan jika body bukan JSON
+  }
+  return fallback;
+}
+
 export function useSimosHistory({
-  activeModule,
+  currentUser,
   processes,
   selectedAlgorithm,
   timeQuantum,
@@ -61,34 +90,92 @@ export function useSimosHistory({
     DEFAULT_QUIZ_SCORE,
   );
 
-  const [quizHistory, setQuizHistory] = useLocalStorage<QuizAttempt[]>(
-    STORAGE_KEYS.QUIZ_HISTORY,
+  const [quizHistory, setQuizHistory] = useState<QuizAttempt[]>([]);
+  const [simulatorHistory, setSimulatorHistory] = useState<SimulatorAttempt[]>(
     [],
   );
-
-  const [simulatorHistory, setSimulatorHistory] = useLocalStorage<
-    SimulatorAttempt[]
-  >(STORAGE_KEYS.SIMULATOR_HISTORY, []);
-
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [savedNotice, setSavedNotice] = useState<string | null>(null);
-  const isFirstCpuMount = useRef(true);
-  const isFirstDeadlockMount = useRef(true);
 
-  const recordSimulatorHistory = (
+  const fetchUserHistory = useCallback(async (username: string) => {
+    setIsLoadingHistory(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/history/${encodeURIComponent(username)}`,
+      );
+      if (!response.ok) {
+        const msg = await extractErrorMessage(
+          response,
+          "Gagal mengambil riwayat dari server",
+        );
+        throw new Error(msg);
+      }
+      const data = await response.json();
+      setQuizHistory(Array.isArray(data.quizHistory) ? data.quizHistory : []);
+      setSimulatorHistory(
+        Array.isArray(data.simulatorHistory) ? data.simulatorHistory : [],
+      );
+    } catch (error) {
+      console.error("Error memuat riwayat dari database:", error);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setQuizHistory([]);
+      setSimulatorHistory([]);
+      return;
+    }
+    fetchUserHistory(currentUser);
+  }, [currentUser, fetchUserHistory]);
+
+  const recordSimulatorHistory = async (
     type: "CPU Scheduling" | "Deadlock",
     algorithm: string,
     summary: string,
     isSafeOrOptimal: boolean,
-  ) => {
+  ): Promise<{ ok: boolean; error?: string }> => {
+    if (!currentUser) {
+      return { ok: false, error: "Silakan login terlebih dahulu" };
+    }
+
     const newAttempt: SimulatorAttempt = {
-      id: Date.now().toString(),
+      id: generateId(),
       type,
       algorithm,
       summary,
       isSafeOrOptimal,
       date: formatIndonesianDate(),
     };
-    setSimulatorHistory((prev) => [newAttempt, ...prev]);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/simulator-history`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: currentUser,
+          ...newAttempt,
+        }),
+      });
+
+      if (!response.ok) {
+        const msg = await extractErrorMessage(
+          response,
+          "Gagal menyimpan simulasi ke database",
+        );
+        return { ok: false, error: msg };
+      }
+
+      const data = await response.json();
+      const savedItem: SimulatorAttempt = data.item ?? newAttempt;
+      setSimulatorHistory((prev) => [savedItem, ...prev]);
+      return { ok: true };
+    } catch (error) {
+      console.error("Error menyimpan riwayat simulasi:", error);
+      return { ok: false, error: "Tidak dapat terhubung ke server" };
+    }
   };
 
   const logCurrentCpuSimulation = () => {
@@ -97,7 +184,7 @@ export function useSimosHistory({
       selectedAlgorithm,
       timeQuantum,
     );
-    recordSimulatorHistory(
+    return recordSimulatorHistory(
       "CPU Scheduling",
       algorithm,
       summary,
@@ -107,107 +194,146 @@ export function useSimosHistory({
 
   const logCurrentDeadlockSimulation = () => {
     const { summary, isSafe } = evaluateDeadlockSafety(deadlockData);
-    recordSimulatorHistory("Deadlock", "Banker's Algorithm", summary, isSafe);
+    return recordSimulatorHistory(
+      "Deadlock",
+      "Banker's Algorithm",
+      summary,
+      isSafe,
+    );
   };
 
-  // Auto-record CPU simulation setelah 1.5 detik tidak ada perubahan
-  useEffect(() => {
-    if (isFirstCpuMount.current) {
-      isFirstCpuMount.current = false;
-      return;
-    }
-    if (activeModule !== "cpu") return;
+  const handleManualSaveSimulation = async (type: "cpu" | "deadlock") => {
+    if (!currentUser) return;
 
-    const timer = setTimeout(() => {
-      logCurrentCpuSimulation();
-    }, 1500);
+    const result =
+      type === "cpu"
+        ? await logCurrentCpuSimulation()
+        : await logCurrentDeadlockSimulation();
 
-    return () => clearTimeout(timer);
-  }, [processes, selectedAlgorithm, timeQuantum]);
-
-  // Auto-record Deadlock simulation setelah 1.5 detik tidak ada perubahan
-  useEffect(() => {
-    if (isFirstDeadlockMount.current) {
-      isFirstDeadlockMount.current = false;
-      return;
-    }
-    if (activeModule !== "deadlock") return;
-
-    const timer = setTimeout(() => {
-      logCurrentDeadlockSimulation();
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [deadlockData]);
-
-  // Simpan manual dari tombol top bar simulator
-  const handleManualSaveSimulation = (type: "cpu" | "deadlock") => {
-    if (type === "cpu") {
-      logCurrentCpuSimulation();
-    } else {
-      logCurrentDeadlockSimulation();
-    }
-    setSavedNotice("Simulasi berhasil dicatat ke riwayat profil!");
-    setTimeout(() => setSavedNotice(null), 2500);
+    setSavedNotice(
+      result.ok
+        ? "Simulasi berhasil disimpan ke database!"
+        : `Gagal: ${result.error}`,
+    );
+    setTimeout(() => setSavedNotice(null), 3000);
   };
 
-  // Catat hasil kuis ke riwayat
-  const handleQuizComplete = (
+  const handleQuizComplete = async (
     moduleType: "cpu" | "deadlock",
     newScore: QuizScoreState,
   ) => {
     setQuizScore(newScore);
 
-    if (newScore.completed) {
-      const correctCount = newScore.correct ?? newScore.score;
-      const wrongCount =
-        newScore.wrong ?? Math.max(0, newScore.total - correctCount);
-      const calculatedFinalScore =
-        newScore.total > 0
-          ? newScore.score > newScore.total
-            ? newScore.score
-            : Math.round((correctCount / newScore.total) * 100)
-          : 0;
+    if (!newScore.completed || !currentUser) return;
 
-      const attempt: QuizAttempt = {
-        id: Date.now().toString(),
-        module: moduleType === "cpu" ? "Kuis Penjadwalan CPU" : "Kuis Deadlock",
-        score: correctCount,
-        total: newScore.total,
-        correct: correctCount,
-        wrong: wrongCount,
-        finalScore: calculatedFinalScore,
-        difficulty: normalizeDifficulty(newScore.difficulty),
-        date: formatIndonesianDate(),
-      };
+    const correctCount = newScore.correct ?? newScore.score;
+    const wrongCount =
+      newScore.wrong ?? Math.max(0, newScore.total - correctCount);
+    const calculatedFinalScore =
+      newScore.total > 0
+        ? newScore.score > newScore.total
+          ? newScore.score
+          : Math.round((correctCount / newScore.total) * 100)
+        : 0;
 
-      setQuizHistory((prevHistory) => [attempt, ...prevHistory]);
+    const attempt: QuizAttempt = {
+      id: generateId(),
+      module: moduleType === "cpu" ? "Kuis Penjadwalan CPU" : "Kuis Deadlock",
+      score: correctCount,
+      total: newScore.total,
+      correct: correctCount,
+      wrong: wrongCount,
+      finalScore: calculatedFinalScore,
+      difficulty: normalizeDifficulty(newScore.difficulty),
+      date: formatIndonesianDate(),
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/quiz-history`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: currentUser,
+          ...attempt,
+        }),
+      });
+
+      if (!response.ok) {
+        const msg = await extractErrorMessage(
+          response,
+          "Gagal menyimpan riwayat kuis ke database",
+        );
+        throw new Error(msg);
+      }
+
+      const data = await response.json();
+      const savedItem: QuizAttempt = data.item ?? attempt;
+      setQuizHistory((prevHistory) => [savedItem, ...prevHistory]);
+    } catch (error) {
+      console.error("Error menyimpan riwayat kuis:", error);
     }
   };
 
-  // Handler hapus riwayat kuis
-  const handleDeleteQuizHistory = (id: string) => {
-    setQuizHistory((prev) => prev.filter((item) => item.id !== id));
+  const handleDeleteQuizHistory = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/quiz-history/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Gagal menghapus riwayat kuis");
+      }
+      setQuizHistory((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error menghapus riwayat kuis:", error);
+    }
   };
 
-  const handleClearQuizHistory = () => {
-    if (window.confirm("Yakin ingin menghapus semua riwayat kuis?")) {
+  const handleClearQuizHistory = async () => {
+    if (!currentUser) return;
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/quiz-history/user/${encodeURIComponent(currentUser)}`,
+        { method: "DELETE" },
+      );
+      if (!response.ok) {
+        throw new Error("Gagal menghapus semua riwayat kuis");
+      }
       setQuizHistory([]);
+    } catch (error) {
+      console.error("Error menghapus semua riwayat kuis:", error);
     }
   };
 
-  // Handler hapus riwayat simulasi
-  const handleDeleteSimulatorHistory = (id: string) => {
-    setSimulatorHistory((prev) => prev.filter((item) => item.id !== id));
+  const handleDeleteSimulatorHistory = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/simulator-history/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Gagal menghapus riwayat simulasi");
+      }
+      setSimulatorHistory((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error menghapus riwayat simulasi:", error);
+    }
   };
 
-  const handleClearSimulatorHistory = () => {
-    if (window.confirm("Yakin ingin menghapus semua riwayat simulasi?")) {
+  const handleClearSimulatorHistory = async () => {
+    if (!currentUser) return;
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/simulator-history/user/${encodeURIComponent(currentUser)}`,
+        { method: "DELETE" },
+      );
+      if (!response.ok) {
+        throw new Error("Gagal menghapus semua riwayat simulasi");
+      }
       setSimulatorHistory([]);
+    } catch (error) {
+      console.error("Error menghapus semua riwayat simulasi:", error);
     }
   };
 
-  // Reset skor kuis saat tombol Reset Data di Home diklik
   const resetQuizScore = () => {
     setQuizScore(DEFAULT_QUIZ_SCORE);
     localStorage.removeItem(STORAGE_KEYS.QUIZ);
@@ -217,6 +343,7 @@ export function useSimosHistory({
     quizScore,
     quizHistory,
     simulatorHistory,
+    isLoadingHistory,
     savedNotice,
     handleManualSaveSimulation,
     handleQuizComplete,
