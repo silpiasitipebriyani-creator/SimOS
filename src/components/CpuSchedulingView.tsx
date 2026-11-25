@@ -32,14 +32,14 @@ interface CpuSchedulingViewProps {
 }
 
 const PRESET_COLORS = [
-  "#2563eb", // Blue
-  "#10b981", // Emerald
-  "#f59e0b", // Amber
-  "#8b5cf6", // Violet
-  "#ec4899", // Pink
-  "#06b6d4", // Cyan
-  "#f97316", // Orange
-  "#64748b", // Slate
+  "#2563eb",
+  "#10b981",
+  "#f59e0b",
+  "#8b5cf6",
+  "#ec4899",
+  "#06b6d4",
+  "#f97316",
+  "#64748b",
 ];
 
 export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
@@ -51,33 +51,28 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
   onChangeTimeQuantum,
   onOpenQuiz,
 }) => {
-  // New process input state
   const [newName, setNewName] = useState("");
   const [newArrival, setNewArrival] = useState(0);
   const [newBurst, setNewBurst] = useState(4);
 
-  // Playback state
   const [currentStepTime, setCurrentStepTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1); // 1 = 1000ms per tick
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Run calculation
   const result: SchedulingResult = runCpuScheduling(
     processes,
     selectedAlgorithm,
     timeQuantum,
   );
 
-  // Keep playback within bounds
   useEffect(() => {
     if (currentStepTime > result.totalTime) {
       setCurrentStepTime(result.totalTime);
     }
   }, [result.totalTime, currentStepTime]);
 
-  // Handle Playback Interval
   useEffect(() => {
     if (isPlaying) {
       const intervalMs = 1000 / playbackSpeed;
@@ -175,7 +170,6 @@ export const CpuSchedulingView: React.FC<CpuSchedulingViewProps> = ({
     }
   };
 
-  // Find snapshot for current playback time
   const currentSnapshot = result.timeline[currentStepTime] || {
     time: currentStepTime,
     runningProcessId: null,

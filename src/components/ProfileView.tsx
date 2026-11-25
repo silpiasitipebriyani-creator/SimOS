@@ -272,8 +272,8 @@ export function ProfileView({
         <aside className="space-y-6 lg:col-start-3 lg:row-start-1">
           <div className={cardClass}>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 shrink-0 bg-secondary rounded-full flex items-center justify-center border-4 border-secondary-soft shadow-md">
-                <User className="w-7 h-7 text-on-secondary" />
+              <div className="w-16 h-16 shrink-0 bg-tertiary rounded-full flex items-center justify-center border-4 border-secondary-soft shadow-md">
+                <User className="w-7 h-7 text-ink-reverse" />
               </div>
               <div className="min-w-0">
                 <h2 className="text-xl font-bold text-ink truncate">

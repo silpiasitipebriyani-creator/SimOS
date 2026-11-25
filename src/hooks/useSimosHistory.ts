@@ -72,9 +72,7 @@ async function extractErrorMessage(
     if (data && typeof data.error === "string") {
       return data.error;
     }
-  } catch {
-    // Abaikan jika body bukan JSON
-  }
+  } catch {}
   return fallback;
 }
 

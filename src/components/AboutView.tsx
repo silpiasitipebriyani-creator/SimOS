@@ -7,9 +7,12 @@ import {
   GraduationCap,
   ShieldAlert,
 } from "lucide-react";
-import ridho from "../../assets/ridho-removebg-preview.png";
-import silpia from "../../assets/silpia-removebg-preview.png";
-import salsabila from "../../assets/salsabila-removebg-preview.png";
+import ridho from "../../assets/ridho.png";
+import silpia from "../../assets/silpia.png";
+import salsabila from "../../assets/salsabila.png";
+import sahla from "../../assets/sahla.png";
+import hasna from "../../assets/hasna.png";
+import fariz from "../../assets/fariz.png";
 
 interface TeamMember {
   name: string;
@@ -24,11 +27,19 @@ interface AboutViewProps {
 }
 
 const teamMembers: TeamMember[] = [
-  { name: "Hasna Nazma Syahidah", npm: "257006111067", initials: "HN" },
+  {
+    name: "Hasna Nazma Syahidah",
+    npm: "257006111067",
+    initials: "HN",
+    photo: hasna,
+    isCutout: true,
+  },
   {
     name: "Sahla Jahidatul Milla Al Azizah",
     npm: "257006111112",
     initials: "SJ",
+    photo: sahla,
+    isCutout: true,
   },
   {
     name: "Salsabila",
@@ -51,7 +62,13 @@ const teamMembers: TeamMember[] = [
     photo: silpia,
     isCutout: true,
   },
-  { name: "Fariz Alwasi", npm: "257006111117", initials: "FA" },
+  {
+    name: "Fariz Alwasi",
+    npm: "257006111117",
+    initials: "FA",
+    photo: fariz,
+    isCutout: true,
+  },
 ];
 
 export const AboutView: React.FC<AboutViewProps> = ({ onBack }) => {
@@ -197,7 +214,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onBack }) => {
                         src={member.photo}
                         alt=""
                         aria-hidden="true"
-                        className="pointer-events-none absolute -right-2 bottom-14 z-5 h-54 w-auto origin-bottom object-contain object-bottom transition-transform duration-300 group-hover:scale-105 sm:h-57"
+                        className="pointer-events-none absolute right-3 bottom-14 z-5 h-54 w-auto origin-bottom object-contain object-bottom transition-transform duration-300 group-hover:scale-105 sm:right-5 sm:h-57"
                       />
                     </>
                   )}
@@ -220,7 +237,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onBack }) => {
                         hasFullPhoto
                           ? "text-white"
                           : hasCutoutPhoto
-                            ? "max-w-[54%] text-on-secondary dark:text-slate-950"
+                            ? "max-w-[50%] text-on-secondary dark:text-slate-950"
                             : "text-ink"
                       }`}
                     >
