@@ -16,7 +16,7 @@ import {
 } from "../utils/simulationHelpers";
 
 const RAW_API_URL = (
-  import.meta.env.VITE_API_URL || "http://localhost:3001"
+  import.meta.env.VITE_API_URL || "https://backend-simos-production.up.railway.app"
 ).replace(/\/+$/, "");
 
 const API_BASE_URL = RAW_API_URL.endsWith("/api")
