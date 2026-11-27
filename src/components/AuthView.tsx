@@ -20,7 +20,9 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
       import.meta.env.VITE_API_URL ||
       "https://backend-simos-production.up.railway.app";
     const baseUrl = rawBaseUrl.replace(/\/+$/, "");
-    const endpoint = isLogin ? `${baseUrl}/login` : `${baseUrl}/register`;
+    const endpoint = isLogin
+      ? `${baseUrl}/api/login`
+      : `${baseUrl}/api/register`;
 
     try {
       const response = await fetch(endpoint, {
