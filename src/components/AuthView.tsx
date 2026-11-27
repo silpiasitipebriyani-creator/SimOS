@@ -9,12 +9,17 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+    setLoading(true);
 
-    const baseUrl = import.meta.env.VITE_API_URL;
+    const rawBaseUrl =
+      import.meta.env.VITE_API_URL ||
+      "https://backend-simos-production.up.railway.app";
+    const baseUrl = rawBaseUrl.replace(/\/+$/, "");
     const endpoint = isLogin ? `${baseUrl}/login` : `${baseUrl}/register`;
 
     try {
@@ -24,7 +29,7 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
         if (isLogin) {
@@ -35,10 +40,13 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
           setPassword("");
         }
       } else {
-        setMessage(data.error || "Terjadi kesalahan");
+        setMessage(data.error || `Terjadi kesalahan (${response.status})`);
       }
     } catch (error) {
+      console.error("Detail error fetch:", error);
       setMessage("Gagal terhubung ke server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,9 +95,10 @@ export default function AuthView({ onLoginSuccess }: AuthViewProps) {
         </div>
         <button
           type="submit"
-          className="w-full py-3 px-4 bg-accent hover:bg-accent-hover text-white rounded-xl font-semibold transition-colors duration-200 shadow-lg shadow-accent/20"
+          disabled={loading}
+          className="w-full py-3 px-4 bg-accent hover:bg-accent-hover disabled:opacity-60 text-white rounded-xl font-semibold transition-colors duration-200 shadow-lg shadow-accent/20"
         >
-          {isLogin ? "Masuk" : "Daftar"}
+          {loading ? "Memproses..." : isLogin ? "Masuk" : "Daftar"}
         </button>
       </form>
 
